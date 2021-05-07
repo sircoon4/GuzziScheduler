@@ -1,84 +1,64 @@
-import * as React from 'react';
-import { Button, View, Text } from 'react-native';
-import { BoardRepository } from 'react-native-draganddrop-board';
-import { Board } from 'react-native-draganddrop-board';
+import React, { useState, useCallback } from "react";
+import { View, TouchableOpacity, Text } from "react-native";
+import DraggableFlatList, {
+  RenderItemParams,
+} from "react-native-draggable-flatlist";
 
-const data = [
-  {
-    id: 1,
-    name: 'TO DO',
-    rows: [
-      {
-        id: '1',
-        name: 'Analyze your audience',
-        description: 'Learn more about the audience to whom you will be speaking'
-      },
-      {
-        id: '2',
-        name: 'Select a topic',
-        description: 'Select a topic that is of interest to the audience and to you'
-      },
-      {
-        id: '3',
-        name: 'Define the objective',
-        description: 'Write the objective of the presentation in a single concise statement'
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'IN PROGRESS',
-    rows: [
-      {
-        id: '4',
-        name: 'Look at drawings',
-        description: 'How did they use line and shape? How did they shade?'
-      },
-      {
-        id: '5',
-        name: 'Draw from drawings',
-        description: 'Learn from the masters by copying them'
-      },
-      {
-        id: '6',
-        name: 'Draw from photographs',
-        description: 'For most people, it’s easier to reproduce an image that’s already two-dimensional'
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: 'DONE',
-    rows: [
-      {
-        id: '7',
-        name: 'Draw from life',
-        description: 'Do you enjoy coffee? Draw your coffee cup'
-      },
-      {
-        id: '8',
-        name: 'Take a class',
-        description: 'Check your local university extension'
-      }
-    ]
-  }
-]
+const NUM_ITEMS = 10;
 
-const boardRepository = new BoardRepository(data);
+function getColor(i) {
+  const multiplier = 255 / (NUM_ITEMS - 1);
+  const colorVal = i * multiplier;
+  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
+}
 
-function MainToDoListScreen({ navigation }) {
+const exampleData = [...Array(20)].map((d, index) => {
+  const backgroundColor = getColor(index);
+  return {
+    key: `item-${backgroundColor}`,
+    label: String(index),
+    backgroundColor
+  };
+});
+
+function MainToDoListScreen() {
+  const [data, setData] = useState(exampleData);
+
+  const renderItem = useCallback(
+    ({ item, index, drag, isActive }) => {
+      return (
+        <TouchableOpacity
+          style={{
+            height: 100,
+            backgroundColor: isActive ? "red" : item.backgroundColor,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onLongPress={drag}
+        >
+          <Text
+            style={{
+              fontWeight: "bold",
+              color: "white",
+              fontSize: 32,
+            }}
+          >
+            {item.label}
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    []
+  );
+
   return (
-    <View>
-      <Text>Main ToDo-List Screen</Text>
-      <Button
-        title="Recommend Schedule"
-        onPress={() => navigation.navigate('Recommend')}
+    <View style={{ flex: 1 }}>
+      <DraggableFlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => `draggable-item-${item.key}`}
+        onDragEnd={({ data }) => setData(data)}
       />
-      <Board
-            boardRepository={boardRepository}
-            open={() => {}}
-            onDragEnd={() => {}}
-        />
     </View>
   );
 }

@@ -2,24 +2,15 @@ import * as React from 'react';
 import { Button, View, Text } from 'react-native';
 import { Calendar } from 'react-native-big-calendar';
 
-const events = [
-    {
-      title: 'Meeting',
-      start: new Date(2020, 1, 11, 10, 0),
-      end: new Date(2020, 1, 11, 10, 30),
-    },
-    {
-      title: 'Coffee break',
-      start: new Date(2020, 1, 11, 15, 45),
-      end: new Date(2020, 1, 11, 16, 30),
-    },
-  ]
+// 당일 주차 부터 4주차까지 나오도록
+// 일정 삭제 기능....
+// array 변수에 따라서 다르게 표시되도록
 
 function RecommendScreen({ navigation }) {
   return (
     <View>
       <Text>Recommend Screen</Text>
-      <Calendar events={events} height={600} />
+      <Calendar events={actualEvents} height={600} />
       <Button
         title="Confirm"
         onPress={() => navigation.navigate('MainCalendar')}
