@@ -9,7 +9,7 @@ import { Calendar } from 'react-native-big-calendar';
 function RecommendScreen({ navigation }) {
   return (
     <View>
-      <Text>Recommend Screen</Text>
+      <Text>Recommend Screen!!!!</Text>
       <Calendar events={actualEvents} height={600} />
       <Button
         title="Confirm"
