@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Button } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
@@ -21,7 +21,7 @@ const exampleData = [...Array(20)].map((d, index) => {
   };
 });
 
-function MainToDoListScreen() {
+function MainToDoListScreen({navigation}) {
   const [data, setData] = useState(exampleData);
 
   const renderItem = useCallback(
@@ -58,6 +58,10 @@ function MainToDoListScreen() {
         renderItem={renderItem}
         keyExtractor={(item, index) => `draggable-item-${item.key}`}
         onDragEnd={({ data }) => setData(data)}
+      />
+      <Button
+        title="Recommend"
+        onPress={() => navigation.navigate('Recommend')}
       />
     </View>
   );
