@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "565682699402",
+    "firebase_url": "https://guzzischeduler-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "guzzischeduler",
+    "storage_bucket": "guzzischeduler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565682699402:android:a60862bfc9030559840173",
+        "android_client_info": {
+          "package_name": "com.guzzischeduler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "565682699402-0eje6g328h5i52kk0fn15glilbbeseaa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guzzischeduler",
+            "certificate_hash": "677a56c3dbf9683dad5e6fa0a043ca133b716636"
+          }
+        },
+        {
+          "client_id": "565682699402-5lms47i0ksvas64i05p8qt5721q0ibgh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guzzischeduler",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "565682699402-b5705p4t6onush99tmbc12kpg3uci4pn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOg7I4wEQPzIWVohPqphAQTidNVf7dyZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "565682699402-b5705p4t6onush99tmbc12kpg3uci4pn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
