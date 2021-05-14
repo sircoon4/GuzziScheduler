@@ -40,7 +40,7 @@ function App() {
       database()
       .ref(path)
       .update({
-        Profile: {
+        profile: {
           name: user.displayName
         }
       })
