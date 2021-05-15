@@ -35,16 +35,18 @@ function App() {
     if (initializing) {
       setInitializing(false);
 
-      var path = '/users/' + user.email.slice(0,-4);
-      console.log(path);
-      database()
-      .ref(path)
-      .update({
-        profile: {
-          name: user.displayName
-        }
-      })
-      .then(() => console.log('Data updated.'));
+      if(user){
+        var path = '/users/' + user.email.slice(0,-4);
+        console.log(path);
+        database()
+        .ref(path)
+        .update({
+          profile: {
+            name: user.displayName
+          }
+        })
+        .then(() => console.log('Data updated.'));
+      }
     }
   }
 
