@@ -3,9 +3,11 @@ import { Button, View, Text } from 'react-native';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import * as Schedule from '../utils/Schedule.js';
+import * as dbAct from '../utils/dbAct.js';
 
 const Tab = createBottomTabNavigator();
+
+var algoNum = 2;
 
 function TestScreen({ navigation }) {
   return (
@@ -20,12 +22,14 @@ function TestScreen({ navigation }) {
 function ScreenGenerator({ route }){
     const num = route.params.num;
 
+    var algoScrNum = algoNum;
+
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>Test Screen {num}</Text>
             <Button
                 title="Test Button"
-                onPress={async () => console.log(await Schedule.getSchedule(2))}
+                onPress={async () => console.log(await dbAct.createTodo({title: "조모임", startDate: new Date().getTime()}))}
             />
         </View>
     )
