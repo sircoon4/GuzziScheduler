@@ -4,15 +4,16 @@ import { Button, View, Text, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 
 import IntroScreen from './screens/IntroScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
-import RecommendScreenFirst from './screens/RecommendScreenFirst';
-import RecommendScreenSecond from './screens/RecommendScreenSecond';
-import RecommendScreenThird from './screens/RecommendScreenThird';
-import RecommendScreenFourth from './screens/RecommendScreenFourth';
+// import RecommendScreenFirst from './screens/RecommendScreenFirst';
+// import RecommendScreenSecond from './screens/RecommendScreenSecond';
+// import RecommendScreenThird from './screens/RecommendScreenThird';
+// import RecommendScreenFourth from './screens/RecommendScreenFourth';
+import RecommendScreen from './screens/RecommendScreen';
 import MainCalendarScreen from './screens/MainCalendarScreen';
 import MainToDoListScreen from './screens/MainToDoListScreen';
 import SettingScreen from './screens/SettingScreen';
@@ -24,7 +25,7 @@ import database from '@react-native-firebase/database';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const RecommedTab = createMaterialTopTabNavigator();
+
 
 function ProfileHeader() {
   var profilePath;
@@ -120,20 +121,20 @@ function MainTab() {
   );
 }
 
-function RecommendTab() {
-  return (
-    <RecommedTab.Navigator
-    tabBarOptions={{
-      labelStyle: { fontSize: 12 },
-      style: { backgroundColor: 'sky'},
-    }}
-  >
-    <RecommedTab.Screen name="Screen1" component={RecommendScreenFirst} />
-    <RecommedTab.Screen name="Screen2" component={RecommendScreenSecond} />
-    <RecommedTab.Screen name="Screen3" component={RecommendScreenThird} />
-    <RecommedTab.Screen name="Screen4" component={RecommendScreenFourth}/>
-  </RecommedTab.Navigator>
-  );
-}
+// function RecommendTab() {
+//   return (
+//     <RecommedTab.Navigator
+//     tabBarOptions={{
+//       labelStyle: { fontSize: 12 },
+//       style: { backgroundColor: 'sky'},
+//     }}
+//   >
+//     <RecommedTab.Screen name="Screen1" component={RecommendScreenFirst} />
+//     <RecommedTab.Screen name="Screen2" component={RecommendScreenSecond} />
+//     <RecommedTab.Screen name="Screen3" component={RecommendScreenThird} />
+//     <RecommedTab.Screen name="Screen4" component={RecommendScreenFourth}/>
+//   </RecommedTab.Navigator>
+//   );
+// }
 
 export default App;
