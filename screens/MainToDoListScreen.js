@@ -1,33 +1,33 @@
-import React, { useState, useCallback ,Component} from "react";
-import { View, TouchableOpacity, Text, Button ,StyleSheet} from "react-native";
+import React, { useState} from "react";
+import { View, TouchableOpacity, Text, Button ,StyleSheet,Alert} from "react-native";
 import { DraxProvider, DraxView ,DraxList} from 'react-native-drax';
-import moment from "moment";
-import DateRangePicker from "react-native-daterange-picker";
-import Setting from './Setting'
-import { borderRadius } from "react-select/src/theme";
+import Setting from './Setting';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { block } from "react-native-reanimated";
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+import Icon3 from 'react-native-vector-icons/Ionicons';
+
 
 export function requestList(){
   return [
-    { id:Math.random().toString(),title: "정기회의1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4},
-  { id:Math.random().toString(),title: "교육세션1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4}, 
-  { id:Math.random().toString(),title: "정기회의2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4}, 
-  {id:Math.random().toString(), title: "교육세션2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4}, 
-  { id:Math.random().toString(),title: "정기회의3", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime: 3,priority:4}, 
+    { id:0,title: "정기회의1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
+  minTime:1, maxTime:3,priority:4,color:'red'},
+  { id:1,title: "교육세션1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
+  minTime:1, maxTime:3,priority:4,color:'blue'}, 
+  { id:2,title: "정기회의2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
+  minTime:1, maxTime:3,priority:4, color:'blue'}, 
+  {id:3, title: "교육세션2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
+  minTime:1, maxTime:3,priority:4, color:'yellow'}, 
+  { id:4,title: "정기회의3", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
+  minTime:1, maxTime: 3,priority:4, color:'red'}, 
    ];
   }
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-const getBackgroundColor = (userIndex) => {
+const getBackgroundColor = (userItem) => {
+  if(selectList.includes(userItem))userIndex=0;
+  else userIndex=1;
   switch (userIndex % 6) {
     case 0:
-      return '#ffaaaa';
+      return '#dedede';
     case 1:
       return '#aaffaa';
     case 2:
@@ -41,38 +41,115 @@ const getBackgroundColor = (userIndex) => {
     default:
       return '#aaaaaa';
   }
-}
+};
 
 const getHeight = (userIndex) => {
-  let height = 130;
+  const height = 130;
   return height;
-}
+};
 
-const getItemStyleTweaks = (userItem) => {
-  const userIndex = 6;
+const getItemStyleTweaks = (userItem,unselectList,active) => {
+  const userIndex=6;
   return {
-    backgroundColor: getBackgroundColor(userIndex),
+    backgroundColor: getSelectedColor(userItem,unselectList,active),
     height: getHeight(userIndex),
   };
 };
+ 
+const handleSelected = (id,unselectList)=>{
+  return{
+    backgroundColor: getSelectedColor(id,unselectList),
+    height:130,
+  } 
+};
+
+const getSelectedColor=(item,unselectList,active)=>{
+  let color= '#aaffaa';
+  if(unselectList.find(el=>el.id===item.id))
+      color='#rgba(0,0,0,0.1)';
+  else{
+    if(active)
+      color='#aaffaa';
+    else 
+      color='#rgba(0,0,0,0.1)';
+  }
+  return color;
+};
 
 const MainToDoListScreen = ({navigation}) => {
-
   // 전체 todos
   const [todos,setTodos]=useState(requestList());
   // 1. todo 추가
-  const addTodo = (newTitle, newStart, newEnd, newDuration, newMin, newMax, newPriority) => {
-    console.log("Hello");
+  const addTodo = (newTitle, newStart, newEnd, newDuration, newMin, newMax, newPriority,newColor) => {
+    
     setTodos(() =>[
       ...todos,
-      {id:Math.random().toString(),title:newTitle,startDate:newStart,endDate:newEnd ,
-      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority},
+      {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
+      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor},
+      ]);
+      setUnselected(()=>[
+        ...unselectList, {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
+          duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor},
       ]);
       SettingModal();
   };
+
+  const showDelteAlert = (item) =>
+  Alert.alert(
+    "Delete Todo",
+    "Are you sure you want to delete",
+    [
+      {
+        text: "Cancel",
+        onPress: () => Alert.alert(
+          "",
+          "Cancel."),
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        onPress: () => {
+          Alert.alert(
+            "",
+            "Deleted successfully.");    
+          onRemove(item.id)
+        },
+        style: "default",
+      }
+    ],
+  );
+  const showCompleteAlert = (item) =>
+  Alert.alert(
+    "Complete Todo",
+    "Are you sure you want to complete",
+    [
+      {
+        text: "Cancel",
+        onPress: () => Alert.alert(
+          "",
+          "Cancel."),
+        style: "cancel",
+      },
+      {
+        text: "Complete",
+        onPress: () => {
+          Alert.alert(
+            "",
+            "Complete");    
+          onRemove(item.id)
+        },
+        style: "default",
+      }
+    ],
+  );
+
+// todo 추가시 변경된 id 반영
+  const[id,setId]=useState(5);
+  const SettingId=()=>{
+    setId(id+1);
+  }
  // 2. todo 삭제
   const onRemove = id =>{
-
     setTodos(todos.filter(todo=>todo.id!==id));
   };
 
@@ -81,7 +158,38 @@ const MainToDoListScreen = ({navigation}) => {
   function SettingModal(){
     setModal(!modal);
   };
+  
+  // 4. 선택된 elemnt
+  const [active,setActive]=useState(false);
+  const [check,setCheck] = useState(false);
+  const [count,setCount]=useState(0);
+  function SettingActive(){
+    setActive(!active);
+  }
+  // 5. edit
+  const [edit,setEdit]=useState(false);
+  const [editList,setEditList]=useState([]);
+  function SettingEdit(item){
+    setEdit(true);
+    setEditList(todos.filter(todo=>todo.id==item.id));
+    SettingModal();
+  }
+  // edit 할꺼면, item id에 맞는 리스트 전부 전달해줘야함
 
+
+  const [unselectList,setUnselected]=useState(requestList());
+  function SettingChecked(item){
+    if(active){
+      setCheck(!check); setCount(count+1);
+      if(check==true && count%2==1){
+        setUnselected(unselectList.filter(el=>el.id!==item.id));
+      }
+      if(check==false){
+        setUnselected(()=>[...unselectList,item]);
+      }
+      setCheck(!check)
+    }
+  }
   return (
     <View style={{flex:1}}>
       <Text style={styles.mainTitle}>ToDo-List</Text>
@@ -90,44 +198,61 @@ const MainToDoListScreen = ({navigation}) => {
           <DraxList
             data={todos}
             renderItemContent={({ item }) => (
-              <View style={[styles.alphaItem, getItemStyleTweaks(item)]}>
-                <Text style={styles.title}> Title: {item.title}{"\n"}</Text>
+              <TouchableOpacity onPress={()=>SettingChecked(item)} style={[styles.alphaItem, getItemStyleTweaks(item,unselectList,active)]}>
+                <View style={styles.color}>
+                  <Icon2 name="circle" size={20} color={item.color} style={styles.color}/>
+                  <Text style={styles.title}>{item.title}{"\n"}</Text>
+                </View>
                 <Text style={styles.alphaText}>
-                  startDate: {item.startDate}   ~   endDate: {item.endDate}{"\n"}
+                  term: {item.startDate}   ~   {item.endDate}{"\n"}
                   duration: {item.duration}(h)                       priority: {item.priority}{"\n"}
                   minTime: {item.minTime}(h)                         maxTime: {item.maxTime}(h){"\n"}
                 </Text>
-                <TouchableOpacity style={styles.completeCircle}>
-                <Text style={styles.buttonText} onPress={()=>onRemove(item.id)}>
-                  <Icon name="circledowno" size={24} color="green" />
+                <TouchableOpacity style={styles.editIcon}>
+                <Text onPress={()=>SettingEdit(item)}>
+                  <Icon name="edit" size={20} color="black" />
                 </Text>
               </TouchableOpacity> 
-              <TouchableOpacity style={styles.buttonContainer}>
-                <Text style={styles.buttonText} onPress={()=>onRemove(item.id)}>
-                  <Icon name="delete" size={25} color="#e33057" />
+                <TouchableOpacity style={styles.completeIcon}>
+                <Text onPress={()=>showCompleteAlert(item)}>
+                  <Icon name="circledowno" size={20} color="blue" />
                 </Text>
               </TouchableOpacity> 
-              </View>
+              <TouchableOpacity style={styles.deleteIcon}>
+                <Text onPress={()=>showDelteAlert(item)}>
+                  <Icon name="delete" size={22} color="red" />
+                </Text>
+              </TouchableOpacity> 
+              </TouchableOpacity>
             )}
             onItemReorder={({ fromIndex, toIndex }) => {
               const newData = todos.slice();
               newData.splice(toIndex, 0, newData.splice(fromIndex, 1)[0]);
               setTodos(newData); // 우선순위 변경
+              
             }}
+            
             keyExtractor={(item) => item}
           />
         <View style={styles.btn_container}>
           <TouchableOpacity onPress={()=>SettingModal()}>
-            <Text style={styles.text}>+</Text>
+          <Icon3 name="add-circle" size={70} color="#00B9AD"/>
           </TouchableOpacity>
         </View>
         </View>
-        {modal?<Setting modalHandler={()=>SettingModal()} onAddTodo={addTodo}/>:<></>}
       </DraxProvider>
-      <Button
-      title="Recommend"
-      onPress={() => navigation.navigate('Recommend')}
-   />
+      <View style={styles.btn_container2}>
+        <TouchableOpacity style={styles.btn}
+        onPress={() => navigation.navigate('Recommend')}>
+          <Text style={styles.buttonText}>Recommend</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.btn}
+        onPress={() => SettingActive()}>
+          <Text  style={styles.buttonText}>Select</Text>
+      </TouchableOpacity>
+      </View>
+      {modal?<Setting onAddTodo={addTodo} idHandler={SettingId} 
+      modalHandler={SettingModal} editSign={edit} editItem={editList}/>:<></>}
+
    </View>
   );
 }
@@ -144,18 +269,22 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: -25,
   },
+  btn:{
+   marginRight:10,
+   width:'40%',
+  },
   btn_container: {
       position: "absolute",
       bottom:10,
-      right:0,
-      color:`white`,
-      backgroundColor: `orange`,
-      alignItems: 'center',
-      justifyContent: `center`,
-      width:60,
-      height:60,
-      borderRadius: 35
+      right:5,
    },
+   btn_container2: {
+    flexDirection:'row',
+    backgroundColor:'#rgba(260,260,260,0.1)',
+    width:'100%',
+    height: '7%',
+    justifyContent:'center',
+  },
    title: {
       fontSize: 17,
       fontWeight: "bold"
@@ -181,12 +310,22 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 50,
     textAlign:"center",
-    color: `white`,
+    color:"white",
   },
-  completeCircle: {
+  editIcon:{
+    position:'absolute',
+    left:270,
+    bottom:102
+  },
+  completeIcon: {
     position:'absolute',
     left:305,
-    bottom: 95
+    bottom: 102
+  },
+  deleteIcon: {
+    position:'absolute',
+    left:340,
+    bottom: 100,
   },
   strikeText: {
     color: '#bbb',
@@ -195,11 +334,17 @@ const styles = StyleSheet.create({
   unstrikeText: {
     color: '#29323c',
   },
-  buttonContainer: {
-    position:'absolute',
-    left:340,
-    bottom: 95,
-  }
+ 
+  buttonText:{
+    textAlign:'center',
+    paddingTop: '5%',
+    color:`#00B9AD`,
+    fontSize:20,
+  },
+  color:{
+    flexDirection:'row',
+    paddingRight:10,
+}
 });
 
 export default MainToDoListScreen;
