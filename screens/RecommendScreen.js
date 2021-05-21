@@ -3,8 +3,9 @@ import { Button, View, Text, Alert } from 'react-native';
 import { useRef, useState, useEffect } from 'react';
 import { Calendar } from 'react-native-big-calendar';
 import * as dbAct from '../utils/dbAct.js';
+import Icon from 'react-native-vector-icons/AntDesign';
 
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-top-tabs';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 const Tab = createMaterialBottomTabNavigator();
 const eventsExample1 = [
@@ -237,27 +238,22 @@ function ScreenGenerator({ navigation, route }){
       return (
         <View>
         <Text>Recommend {num} Screen!</Text>
-        <Button
-          title="Recommend1"
+        {/* <Button
+          title=""
           onPress={()=>{
             changeRecommend(1)
           }
           }
-        />
-        <Button
-          title="Recommend2"
+        /> */}
+        <Icon name="leftcircle" size={24} color="green" /> 
+        {/* <Button
+          title=""
           onPress={()=>{
             changeRecommend(2)
           }
-          }
-        />
-        <Button
-          title="Recommend3"
-          onPress={()=>{
-            changeRecommend(3)
-          }
-          }
-        />
+          }/> */} 
+        <Icon name="rightcircle" size={24} color="green" /> 
+  
         <Button
           title="Back"
           onPress={() => navigation.navigate('MainToDo')}
@@ -268,7 +264,9 @@ function ScreenGenerator({ navigation, route }){
         />
         <Calendar events={actualEvents} height={500} 
         locale="ko" date={date}
-        onPressEvent={(day)=>clickEvent(day)}/>
+        onPressEvent={(day)=>clickEvent(day)}
+        swipeEnabled={true}
+        />
         
       </View>
       );
