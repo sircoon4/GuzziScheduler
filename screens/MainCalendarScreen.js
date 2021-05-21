@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
-import {Alert, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Alert, StyleSheet, Text, View, TouchableOpacity, Image, Button} from 'react-native';
+
 import {Agenda} from 'react-native-calendars';
+import Modal from 'react-native-modal';
+import ScheduleBuilder from '../rn_modules/ScheduleBuilder';
 
 const testIDs = require('../testIDs');
 
@@ -9,37 +12,61 @@ export default class MainCalendarScreen extends Component {
     super(props);
 
     this.state = {
-      items: {}
+      isModalVisible: false,
+      items: {},
     };
   }
 
   render() {
     return (
-      <Agenda
-        testID={testIDs.agenda.CONTAINER}
-        items={this.state.items}
-        loadItemsForMonth={this.loadItems.bind(this)}
-        selected={'2017-05-16'}
-        renderItem={this.renderItem.bind(this)}
-        renderEmptyDate={this.renderEmptyDate.bind(this)}
-        rowHasChanged={this.rowHasChanged.bind(this)}
-        // markingType={'period'}
-        // markedDates={{
-        //    '2017-05-08': {textColor: '#43515c'},
-        //    '2017-05-09': {textColor: '#43515c'},
-        //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-        //    '2017-05-21': {startingDay: true, color: 'blue'},
-        //    '2017-05-22': {endingDay: true, color: 'gray'},
-        //    '2017-05-24': {startingDay: true, color: 'gray'},
-        //    '2017-05-25': {color: 'gray'},
-        //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-        // monthFormat={'yyyy'}
-        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-        // renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-        // hideExtraDays={false}
-      />
+      <View style={{flex: 1}}>
+        <Agenda
+          testID={testIDs.agenda.CONTAINER}
+          items={this.state.items}
+          loadItemsForMonth={this.loadItems.bind(this)}
+          selected={'2017-05-16'}
+          renderItem={this.renderItem.bind(this)}
+          renderEmptyDate={this.renderEmptyDate.bind(this)}
+          rowHasChanged={this.rowHasChanged.bind(this)}
+          // markingType={'period'}
+          // markedDates={{
+          //    '2017-05-08': {textColor: '#43515c'},
+          //    '2017-05-09': {textColor: '#43515c'},
+          //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
+          //    '2017-05-21': {startingDay: true, color: 'blue'},
+          //    '2017-05-22': {endingDay: true, color: 'gray'},
+          //    '2017-05-24': {startingDay: true, color: 'gray'},
+          //    '2017-05-25': {color: 'gray'},
+          //    '2017-05-26': {endingDay: true, color: 'gray'}}}
+          // monthFormat={'yyyy'}
+          // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
+          // renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+          // hideExtraDays={false}
+        />
+        <View style={{height:60, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+          <Text> 광고 </Text>
+          <TouchableOpacity onPress={()=>this.toggleModal()}>
+              <Image style={{width: 60, height: 60}} source={require('../images/blue_plus_button.png')} />
+          </TouchableOpacity>
+        </View>
+        <Modal 
+          isVisible = {this.state.isModalVisible}
+          onBackdropPress = {() => this.toggleModal()}
+        >
+          <ScheduleBuilder saveSchedule = {(data) => this.saveSchedule(data)}/>
+        </Modal>
+      </View>
     );
   }
+
+  saveSchedule = (data) => {
+    console.log(data);
+    this.toggleModal();
+  }
+
+  toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
 
   loadItems(day) {
     setTimeout(() => {
