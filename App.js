@@ -105,7 +105,7 @@ function App() {
         }}
       >
         <Stack.Screen name="Main" component={MainTab} />
-        <Stack.Screen name="Recommend" component={RecommendTab} options={{ headerShown: false }} />
+        <Stack.Screen name="Recommend" component={RecommendScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
