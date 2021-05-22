@@ -143,7 +143,7 @@ const Setting =(props)=> {
         <ScrollView style={styles.container}>
 
         <View style={styles.modal}>
-        <Text style={styles.titleText}>Setting</Text>
+        <Text style={styles.titleText}>Setting!</Text>
         <View style={Container}>
             <Text style={styles.text,{paddingTop:27}}>Title: </Text>
             <TextInput style={styles.ddayInput}
