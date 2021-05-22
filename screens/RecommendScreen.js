@@ -140,7 +140,7 @@ const eventsExample3 = [
 
 const RecommendScreen = ({ navigation })=> {
   return (
-    <Tab.Navigator options={{headerMode: 'null'}}>
+    <Tab.Navigator>
         <Tab.Screen name="first" component={ScreenGenerator} options={{headerShown: false}} initialParams={{ num: 1 }}/>
         <Tab.Screen name="second" component={ScreenGenerator}  initialParams={{ num: 2 }}/>
         <Tab.Screen name="third" component={ScreenGenerator}  initialParams={{ num: 3 }}/>
@@ -159,7 +159,7 @@ function ScreenGenerator({ navigation, route }){
       //const [events1, setEvents1] = useState([])
       const [actualEvents, setActualEvents] = useState([])
       const [date, setDate] = useState();
-      //const [algoScrNum, setAlgoSrcNum] = useState(algoNum);
+      const [algoNum, setAlgoNum] = useState(0);
       useEffect(() => {
         //원래는 axios.get으로 알고리즘 완성된 배열 가져오기.
         setActualEvents(eventsExample1);
@@ -223,14 +223,32 @@ function ScreenGenerator({ navigation, route }){
         showAlert(day)
       }
 
-      const changeRecommend =(index)=>{
-        if(index==1){
+      const changeRecommendLeft = ()=>{ 
+        if(algoNum==0){
+          setAlgoNum(2)
+          setActualEvents(eventsExample3); // 세번째 알고리즘.
+        }
+        if(algoNum==1){
+          setAlgoNum(0)
+         setActualEvents(eventsExample1); // 첫번째 알고리즘.
+        }
+        if(algoNum==2){
+          setAlgoNum(1)
+          setActualEvents(eventsExample2); // 두번째 알고리즘
+        }
+      }
+
+      const changeRecommendRight = ()=>{ 
+        if(algoNum==0){
+          setAlgoNum(1)
           setActualEvents(eventsExample1); // 첫번째 알고리즘.
         }
-        if(index==2){
+        if(algoNum==1){
+          setAlgoNum(2)
          setActualEvents(eventsExample2); // 두번째 알고리즘.
         }
-        if(index==3){
+        if(algoNum==2){
+          setAlgoNum(0)
           setActualEvents(eventsExample3); // 세번째 알고리즘
         }
       }
@@ -238,22 +256,8 @@ function ScreenGenerator({ navigation, route }){
       return (
         <View>
         <Text>Recommend {num} Screen!</Text>
-        {/* <Button
-          title=""
-          onPress={()=>{
-            changeRecommend(1)
-          }
-          }
-        /> */}
-        <Icon name="leftcircle" size={24} color="green" /> 
-        {/* <Button
-          title=""
-          onPress={()=>{
-            changeRecommend(2)
-          }
-          }/> */} 
-        <Icon name="rightcircle" size={24} color="green" /> 
-  
+        <Icon name="leftcircle" size={24} color="green" onPress={changeRecommendLeft} /> 
+        <Icon name="rightcircle" size={24} color="green" onPress={changeRecommendRight} /> 
         <Button
           title="Back"
           onPress={() => navigation.navigate('MainToDo')}
