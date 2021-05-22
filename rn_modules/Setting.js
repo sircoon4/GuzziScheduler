@@ -1,16 +1,18 @@
 import React,{useState} from 'react';
-import {View, StyleSheet, Picker,Text, TextInput, Image,TouchableOpacity, ScrollView} from 'react-native';
+import {View, StyleSheet,Text, TextInput, Image,TouchableOpacity, ScrollView} from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import CalendarPicker from 'react-native-calendar-picker';
 import { RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome'
-import Tooltip from 'react-native-walkthrough-tooltip';
+import RNPickerSelect from 'react-native-picker-select';
+import { relative } from 'path';
+
 
 
 const Setting =(props)=> {
     const sign = props.editSign;
     const item = props.editItem[0];
-    const [title,setTitle]=sign?useState(item.title):useState(null);
+    const [title,setTitle]=sign?useState(String(item.title)):useState(null);
     const [startDate,setStart]=sign?useState(String(item.startDate)):useState(null);
     const [endDate,setEnd]=sign?useState(String(item.endDate)):useState(null);
     const [duration,setDuration]=sign?useState(String(item.duration)):useState('1');
@@ -18,8 +20,7 @@ const Setting =(props)=> {
     const [maxTime,setMax]=sign?useState(String(item.maxTime)):useState('1');
     const [priority,setPrioirty]=sign?useState(String(item.priority)):useState('1');
     const [color, setColor] =sign?useState(String(item.color)):useState('red');
-    const [showTip, setTip] = useState(false);
-
+    
     const titleInput = newTitle=>{
         setTitle(newTitle);
     };
@@ -42,6 +43,9 @@ const Setting =(props)=> {
         setPrioirty(newPriority);
     };
     const addTodoHandler = () => {
+        console.log(title);
+        console.log(startDate);
+        console.log(end);
         if(sign==false)props.idHandler();
         if(title!=null & startDate!=null&endDate!=null){
         props.onAddTodo(title, startDate, endDate,duration, minTime, maxTime, priority,color);
@@ -118,22 +122,7 @@ const Setting =(props)=> {
             setRangeModal(!rangeModal);
         };
     // 일정 색깔
-    const createToolTip = (
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 200}}>
-            <TouchableOpacity onPress={() => setColor('red')}>
-                <Icon name = "circle" size={30} color="red"/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setColor('blue')}>
-                <Icon name = "circle" size={30} color="blue"/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setColor('green')}>
-                <Icon name = "circle" size={30} color="green"/>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setColor('black')}>
-                <Icon name = "circle" size={30} color="black"/>
-            </TouchableOpacity>
-        </View>
-    )
+  
 
 
       return(
@@ -143,7 +132,7 @@ const Setting =(props)=> {
         <ScrollView style={styles.container}>
 
         <View style={styles.modal}>
-        <Text style={styles.titleText}>Setting!</Text>
+        <Text style={styles.titleText}>Setting</Text>
         <View style={Container}>
             <Text style={styles.text,{paddingTop:27}}>Title: </Text>
             <TextInput style={styles.ddayInput}
@@ -205,49 +194,42 @@ const Setting =(props)=> {
             />
         </View>
             <View style={styles.itemContainer}>
-                <Text style={styles.text,{padding:10}}>MaxTime: </Text> 
-                <Picker
-                    selectedValue={maxTime}
-                    onValueChange={(itemValue,itemIndex)=>maxInput(itemValue)}
-                    style={{ height: 40, width: 290 ,border:1}}
-                >
-                        <Picker.Item label='1' value="1"/>
-                        <Picker.Item label='2' value="2" />
-                        <Picker.Item label='3' value="3"/>
-                        <Picker.Item label='4' value="4" />
-                        <Picker.Item label='5' value="5"/>
-                        <Picker.Item label='6' value="6"/>
-                    </Picker>
+                <RNPickerSelect 
+                onValueChange={(value) => maxInput(value)}
+                items={[
+                    { label: '1', value: '1' },
+                    { label: '2', value: '2' },
+                    { label: '3', value: '3' },
+                    { label: '1', value: '4' },
+                    { label: '2', value: '5' },
+                    { label: '3', value: '6' },
+                 ]}/> 
              </View>
 
             <View style={styles.itemContainer}>
             <Text style={styles.text,{padding:10}}>MinTime: </Text> 
-            <Picker
-                selectedValue={minTime}
-                onValueChange={(itemValue,itemIndex)=>minInput(itemValue)}
-                style={{ height: 40, width: 290 }}
-                >
-                    <Picker.Item label='1' value="1"/>
-                    <Picker.Item label='2' value="2" />
-                    <Picker.Item label='3' value="3"/>
-                    <Picker.Item label='4' value="4" />
-                    <Picker.Item label='5' value="5"/>
-                    <Picker.Item label='6' value="6"/>
-                </Picker>
+            <RNPickerSelect
+                onValueChange={(value) => minInput(value)}
+                items={[
+                    { label: '1', value: '1' },
+                    { label: '2', value: '2' },
+                    { label: '3', value: '3' },
+                    { label: '1', value: '4' },
+                    { label: '2', value: '5' },
+                    { label: '3', value: '6' },
+                 ]}/> 
              </View>
              <View style={styles.itemContainer}>
                 <Text style={styles.text,{padding:10}}>Priority:     </Text> 
-                <Picker
-                    selectedValue={priority}
-                    onValueChange={(itemValue,itemIndex)=>priorityInput(itemValue)}
-                    style={{ height: 40, width: 290 }}
-                >
-                        <Picker.Item label='1' value="1"/>
-                        <Picker.Item label='2' value="2" />
-                        <Picker.Item label='3' value="3"/>
-                        <Picker.Item label='4' value="4" />
-                        <Picker.Item label='5' value="5"/>
-                    </Picker>
+                <RNPickerSelect style={styles.picker}
+                onValueChange={(value) => priorityInput(value)}
+                items={[
+                    { label: '1', value: '1' },
+                    { label: '2', value: '2' },
+                    { label: '3', value: '3' },
+                    { label: '1', value: '4' },
+                    { label: '2', value: '5' },
+                 ]}/> 
              </View>
              <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={()=>props.modalHandler()}>
@@ -328,6 +310,9 @@ const Setting =(props)=> {
         width: '100%',
         backgroundColor: "#fff",
         alignItems: "center",
+    },
+    picker:{
+        marginLeft:30,
     },
     btn_container: {
         alignItems:'center',

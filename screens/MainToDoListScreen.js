@@ -85,7 +85,7 @@ const MainToDoListScreen = ({navigation}) => {
       duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor} 
     if(edit){
       setId(editId)
-      const originItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
+      const originItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd,
         duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor} 
       setTodos(todos.map(todo=>todo.id==editId?originItem:todo));
       setEditId(null);
@@ -187,6 +187,7 @@ const MainToDoListScreen = ({navigation}) => {
     setEditList(todos.filter(todo=>todo.id==item.id));
     setEditId(item.id);
     SettingModal();
+    setEdit(false);
   }
   const [count,setCount]=useState('0');
   function SettingCount(){
