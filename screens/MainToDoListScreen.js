@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 import { View, TouchableOpacity, Text, Button ,StyleSheet,Alert} from "react-native";
 import { DraxProvider, DraxView ,DraxList} from 'react-native-drax';
-import Setting from './Setting';
+import Setting from '../rn_modules/Setting';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/Ionicons';
@@ -69,7 +69,7 @@ const getSelectedColor=(item,unselectList,active)=>{
       color='#rgba(0,0,0,0.1)';
   else{
     if(active)
-      color='#aaffaa';
+      color='#aaffaa'; // item.color로 추후 변경 예정
     else 
       color='#rgba(0,0,0,0.1)';
   }
@@ -81,16 +81,25 @@ const MainToDoListScreen = ({navigation}) => {
   const [todos,setTodos]=useState(requestList());
   // 1. todo 추가
   const addTodo = (newTitle, newStart, newEnd, newDuration, newMin, newMax, newPriority,newColor) => {
-    
-    setTodos(() =>[
+    const newItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
+      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor} 
+    if(edit){
+      setId(editId)
+      const originItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
+        duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor} 
+      setTodos(todos.map(todo=>todo.id==editId?originItem:todo));
+      setEditId(null);
+      setId(todos.length);
+    }
+    else{
+      setTodos(() =>[
       ...todos,
-      {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
-      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor},
+      newItem
       ]);
       setUnselected(()=>[
-        ...unselectList, {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
-          duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor},
+        ...unselectList, newItem
       ]);
+    }
       SettingModal();
   };
 
@@ -144,7 +153,7 @@ const MainToDoListScreen = ({navigation}) => {
   );
 
 // todo 추가시 변경된 id 반영
-  const[id,setId]=useState(5);
+  const[id,setId]=useState(todos.length);
   const SettingId=()=>{
     setId(id+1);
   }
@@ -162,32 +171,43 @@ const MainToDoListScreen = ({navigation}) => {
   // 4. 선택된 elemnt
   const [active,setActive]=useState(false);
   const [check,setCheck] = useState(false);
-  const [count,setCount]=useState(0);
+
   function SettingActive(){
     setActive(!active);
   }
   // 5. edit
+  const [editId,setEditId]=useState(null);
+  function settingEditID(item){
+    setEdit(item.id);
+  }
   const [edit,setEdit]=useState(false);
   const [editList,setEditList]=useState([]);
   function SettingEdit(item){
     setEdit(true);
     setEditList(todos.filter(todo=>todo.id==item.id));
+    setEditId(item.id);
     SettingModal();
   }
-  // edit 할꺼면, item id에 맞는 리스트 전부 전달해줘야함
-
-
+  const [count,setCount]=useState('0');
+  function SettingCount(){
+    setCount(count+1);
+  }
+  
   const [unselectList,setUnselected]=useState(requestList());
   function SettingChecked(item){
     if(active){
-      setCheck(!check); setCount(count+1);
-      if(check==true && count%2==1){
+      SettingCount();
+      if(count==1){
+        setCheck(true);
+      }
+      else if(unselectList.indexOf(item)>-1)setCheck(true);
+      else setCheck(false)
+      if(check){
         setUnselected(unselectList.filter(el=>el.id!==item.id));
       }
-      if(check==false){
+      else{
         setUnselected(()=>[...unselectList,item]);
       }
-      setCheck(!check)
     }
   }
   return (
@@ -204,6 +224,7 @@ const MainToDoListScreen = ({navigation}) => {
                   <Text style={styles.title}>{item.title}{"\n"}</Text>
                 </View>
                 <Text style={styles.alphaText}>
+                  id: {item.id}
                   term: {item.startDate}   ~   {item.endDate}{"\n"}
                   duration: {item.duration}(h)                       priority: {item.priority}{"\n"}
                   minTime: {item.minTime}(h)                         maxTime: {item.maxTime}(h){"\n"}
@@ -228,8 +249,7 @@ const MainToDoListScreen = ({navigation}) => {
             onItemReorder={({ fromIndex, toIndex }) => {
               const newData = todos.slice();
               newData.splice(toIndex, 0, newData.splice(fromIndex, 1)[0]);
-              setTodos(newData); // 우선순위 변경
-              
+              setTodos(newData); 
             }}
             
             keyExtractor={(item) => item}
