@@ -4,6 +4,7 @@ import { TextInputMask } from 'react-native-masked-text';
 import CalendarPicker from 'react-native-calendar-picker';
 import { RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 
 const Setting =(props)=> {
@@ -17,7 +18,8 @@ const Setting =(props)=> {
     const [maxTime,setMax]=sign?useState(String(item.maxTime)):useState('1');
     const [priority,setPrioirty]=sign?useState(String(item.priority)):useState('1');
     const [color, setColor] =sign?useState(String(item.color)):useState('red');
-    
+    const [showTip, setTip] = useState(false);
+
     const titleInput = newTitle=>{
         setTitle(newTitle);
     };
@@ -40,7 +42,7 @@ const Setting =(props)=> {
         setPrioirty(newPriority);
     };
     const addTodoHandler = () => {
-        props.idHandler();
+        if(sign==false)props.idHandler();
         if(title!=null & startDate!=null&endDate!=null){
         props.onAddTodo(title, startDate, endDate,duration, minTime, maxTime, priority,color);
         }
@@ -116,7 +118,22 @@ const Setting =(props)=> {
             setRangeModal(!rangeModal);
         };
     // 일정 색깔
-  
+    const createToolTip = (
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 200}}>
+            <TouchableOpacity onPress={() => setColor('red')}>
+                <Icon name = "circle" size={30} color="red"/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setColor('blue')}>
+                <Icon name = "circle" size={30} color="blue"/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setColor('green')}>
+                <Icon name = "circle" size={30} color="green"/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setColor('black')}>
+                <Icon name = "circle" size={30} color="black"/>
+            </TouchableOpacity>
+        </View>
+    )
 
 
       return(
@@ -126,7 +143,7 @@ const Setting =(props)=> {
         <ScrollView style={styles.container}>
 
         <View style={styles.modal}>
-        <Text style={styles.titleText}>Setting</Text>
+        <Text style={styles.titleText}>Setting!</Text>
         <View style={Container}>
             <Text style={styles.text,{paddingTop:27}}>Title: </Text>
             <TextInput style={styles.ddayInput}
