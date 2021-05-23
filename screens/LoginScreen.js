@@ -51,8 +51,11 @@ function LoginScreen({ navigation }) {
         <Text style={{color:'white', fontSize: 20, fontWeight:'700'}}>로그인</Text>
       </TouchableOpacity>
       <Text style={{margin:20, color:'blue', fontSize:18}}>or</Text>
-      <TouchableOpacity style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
-      margin:12, borderWidth:2, borderRadius:10, borderColor:'blue'}}>
+      <TouchableOpacity 
+        style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
+        margin:12, borderWidth:2, borderRadius:10, borderColor:'blue'}}
+        onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}
+      >
         <Icon style={styles.innerIcon} name="google" size={34} color="orange"/> 
         <Text style={{fontWeight:'700', marginLeft:24}}>Google 계정으로 로그인</Text>
       </TouchableOpacity>
@@ -61,16 +64,6 @@ function LoginScreen({ navigation }) {
         <Icon name="facebook-square" size={34} color="blue"/> 
         <Text style={{fontWeight:'700', marginLeft:15}}>Facebook 계정으로 로그인</Text>
       </TouchableOpacity>
-
-      {/* 이부분 수정해야해용 */}
-      <Button
-        title="Google Sign-In"
-        onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}
-      />
-      <Button
-        title="Goto Main"
-        onPress={() => navigation.navigate('Main')}
-      />
     
       <Text style={{marginTop:80}}>
         <Text style={styles.underline} onPress={() => navigation.navigate('SignUp')} >회원가입</Text> 
