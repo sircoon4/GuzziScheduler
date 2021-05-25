@@ -1,11 +1,17 @@
 import React,{useState} from 'react';
-import {View, StyleSheet,Text, TextInput, Image,TouchableOpacity, ScrollView} from 'react-native';
+import {View, StyleSheet,Text, TextInput, Image,TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import CalendarPicker from 'react-native-calendar-picker';
 import { RadioButton } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome'
-import RNPickerSelect from 'react-native-picker-select';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/AntDesign';
+import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon4 from 'react-native-vector-icons/Ionicons';
 import { relative } from 'path';
+import {Picker} from '@react-native-picker/picker';
+import Tooltip from 'react-native-walkthrough-tooltip';
+import Modal from 'react-native-modal';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 
@@ -19,7 +25,7 @@ const Setting =(props)=> {
     const [minTime,setMin]=sign?useState(String(item.minTime)):useState('1');
     const [maxTime,setMax]=sign?useState(String(item.maxTime)):useState('1');
     const [priority,setPrioirty]=sign?useState(String(item.priority)):useState('1');
-    const [color, setColor] =sign?useState(String(item.color)):useState('red');
+    const [color, setColor] =sign?useState(String(item.color)):useState('#ED6B58');
     
     const titleInput = newTitle=>{
         setTitle(newTitle);
@@ -37,15 +43,13 @@ const Setting =(props)=> {
         setMin(newMin);
     };
     const maxInput = newMax=>{
+        console.log(newMax);
         setMax(newMax);
     };
     const priorityInput = newPriority=>{
         setPrioirty(newPriority);
     };
     const addTodoHandler = () => {
-        console.log(title);
-        console.log(startDate);
-        console.log(end);
         if(sign==false)props.idHandler();
         if(title!=null & startDate!=null&endDate!=null){
         props.onAddTodo(title, startDate, endDate,duration, minTime, maxTime, priority,color);
@@ -57,20 +61,34 @@ const Setting =(props)=> {
   
     
     const textInputStype = {
+        position:'relative',
+        bottom:5,
         height: 35,
-        flex:1,
-        width: '60%',
-        borderColor: 'gray',
-        justifyContent:'center',
-        borderWidth: 1
-      }
+        width:80,
+        borderRadius:7,
+        borderWidth: 1,
+        borderColor:'#555555'
+        }
       
       const Container = {
         width: '100%',
         flexDirection:'row',
-        padding:10
+        marginLeft:50,
+        paddingVertical:10,
       }
 
+      // picker (maxTime, minTime, prioirty 설정) 관련 변수
+      const [open1, setOpen1] = useState(false);
+      const [open2, setOpen2] = useState(false);
+      const [open3, setOpen3] = useState(false);
+      const [items, setItems] = useState([
+        {label: '1', value: '1'},
+        {label: '2', value: '2'},
+        {label: '3', value: '3'},
+        {label: '4', value: '4'},
+        {label: '5', value: '5'},
+        {label: '6', value: '6'}
+        ]);
 
       //  달력에서 date 를 받아옴
       const [startRange,setRangeStart]=useState(null);
@@ -120,69 +138,101 @@ const Setting =(props)=> {
         const [rangeModal,setRangeModal]=useState(false);
         function SettingRangeModal(){
             setRangeModal(!rangeModal);
-        };
+        };  
     // 일정 색깔
-  
+        const [showTip, setTip] = useState(false);
+        const createToolTip = (
+            <View style={{marginBottom:3}}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 300, padding:5}}>
+                <TouchableOpacity onPress={() => setColor('#ED6B58')}>
+                    <Icon name = "circle" size={30} color='#ED6B58'/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#6178C3')}>
+                    <Icon name = "circle" size={30} color="#6178C3"/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#CBFDC0')}>
+                    <Icon name = "circle" size={30} color="#CBFDC0"/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#C6BAFA')}>
+                    <Icon name = "circle" size={30} color="#C6BAFA"/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#FDF394')}>
+                    <Icon name = "circle" size={30} color="#FDF394"/>
+                </TouchableOpacity>
+                </View>
+                 <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 300,padding:5}}>
+                <TouchableOpacity onPress={() => setColor('#727272')}>
+                    <Icon name = "circle" size={30} color='#727272'/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#F19D4E')}>
+                    <Icon name = "circle" size={30} color="#F19D4E"/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#8A2DA3')}>
+                    <Icon name = "circle" size={30} color="#8A2DA3"/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#439459')}>
+                    <Icon name = "circle" size={30} color="#439459"/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setColor('#80DEFB')}>
+                    <Icon name = "circle" size={30} color="#80DEFB"/>
+                </TouchableOpacity>
+              </View>
+            </View>
+        )
 
 
       return(
         <>
-        <TouchableOpacity style={styles.background} activeOpacity={1}
-        onPress={props.modalHandler}/>
-        <ScrollView style={styles.container}>
-
-        <View style={styles.modal}>
-        <Text style={styles.titleText}>Setting</Text>
-        <View style={Container}>
-            <Text style={styles.text,{paddingTop:27}}>Title: </Text>
+        <KeyboardAvoidingView style={styles.modal}
+        behavior="padding" enabled={Platform.OS === "android"}>
+        <View style={styles.buttonContainer}>
+            <TouchableOpacity style={{position:'relative', right:150, top:10}} onPress={()=>props.modalHandler()}>
+                <Icon2 name="close" size={30} color="grey" />
+            </TouchableOpacity>
+            <TouchableOpacity style={{position:'relative', left:150, top:10}}  onPress={()=>addTodoHandler()}>
+                <Icon2 name="check" size={30} color="grey" />
+            </TouchableOpacity>
+            </View>
+        <View style={[Container,{marginVertical:10}]}>
+        <Tooltip 
+                isVisible={showTip}
+                content={createToolTip}
+                onClose={() => setTip(false)}
+                placement="bottom"
+                closeOnContentInteraction={false}>
+                <TouchableOpacity style={{ position:'relative',top:20,left:5, paddingRight:15}}
+                    onPress={() => setTip(true)}>
+                    <Icon name = "circle" size={30} color={color}/>
+                </TouchableOpacity>
+            </Tooltip>
             <TextInput style={styles.ddayInput}
-            placeholder="Add Todo!"
+            placeholder="할 일 제목"
             value={title}
             onChangeText={titleInput}></TextInput>
         </View>
         <View style={Container}>
-            <Text style={styles.text,styles.color}>Color: </Text>
-            <View style={{flexDirection:"row"}}>
-                <RadioButton
-                    value="red"
-                    status={ color === 'red' ? 'checked' : 'unchecked' }
-                    onPress={() => setColor('red')}>
-                </RadioButton>
-                <Text style={styles.color}>red</Text>
-                <Icon name="circle" size={20} color="red" style={styles.color}/>
-            </View>
-            <View style={{flexDirection:"row"}}>
-                <RadioButton
-                    value="blue"
-                    status={ color === 'blue' ? 'checked' : 'unchecked' }
-                    onPress={() => setColor('blue')}>
-                </RadioButton>
-                <Text style={styles.color}>blue</Text>
-                <Icon name="circle" size={20} color="blue" style={styles.color}/>
-            </View>
-
-            <View style={{flexDirection:"row"}}>
-                <RadioButton
-                    value="yellow"
-                    status={ color === 'yellow' ? 'checked' : 'unchecked' }
-                    onPress={() => setColor('yellow')}>
-                </RadioButton>
-                <Text style={styles.color}>yellow</Text>
-                <Icon name="circle" size={20} color="yellow" style={styles.color}/>
-            </View>
+            <Icon name="calendar-check-o" size={25} color={'gray'} style={styles.titleIcon}></Icon>
+            <Text style={[styles.contentTitle]}>시작/마감 시간 설정</Text>
         </View>
-        <View style={Container}>
+        <View style={[Container,{left:45}]}>
             <TouchableOpacity  onPress={()=>SettingRangeModal()}>
-                <View style={{justifyContent:'center'}}>
-                <Text> START DATE:  {startRange?startDate:sign?startDate:''}</Text>
-                <Text> END DATE:    {endRange?endDate:sign?endDate:''}</Text>
-            </View>
-            </TouchableOpacity>
+                <View style={{flexDirection:'row'}}>
+                <Icon3 name = "ray-start-arrow" size={30} color={'#4E5CF6'}
+                style={styles.icon}/>
+                <Text>시작일자               {startRange?startDate:sign?startDate:''}</Text>
+                </View>
+            
+                <View style={{flexDirection:'row'}}>
+                <Icon3 name = "ray-end-arrow" size={30} color={'#4E5CF6'} style={styles.icon}/>
+                <Text>마감일자               {endRange?endDate:sign?endDate:''}</Text>
+                </View>
+        </TouchableOpacity>
+        </View>
         
-      </View>
-
+ 
         <View style={Container}>
-            <Text style={styles.text}>Duration :   </Text>
+            <Icon4 name="alarm-outline" size={30} color={'gray'} style={styles.titleIcon}></Icon4>
+            <Text style={[styles.contentTitle]}>총 소요시간 </Text>
             <TextInputMask
             type={'datetime'}
             options={{
@@ -190,60 +240,78 @@ const Setting =(props)=> {
             }}
             value={duration}
             onChangeText={text => {durationInput(text)}}
-            style={textInputStype}
+            style={[textInputStype,{left:'130%'}]}
             />
+            <Text style={{position:'relative',left:60}}>시간</Text>
         </View>
-            <View style={styles.itemContainer}>
-                <RNPickerSelect 
-                onValueChange={(value) => maxInput(value)}
-                items={[
-                    { label: '1', value: '1' },
-                    { label: '2', value: '2' },
-                    { label: '3', value: '3' },
-                    { label: '1', value: '4' },
-                    { label: '2', value: '5' },
-                    { label: '3', value: '6' },
-                 ]}/> 
+            <View style={Container}>
+              
+                <Text style={[styles.contentTitle,{left:70}]}>하루 최소 시간 </Text>
+                <DropDownPicker  style={[textInputStype,{left:'280%'}]}
+                    zIndex={3}
+                    zIndexInverse={1}
+                    open={open1}
+                    value={maxTime}
+                    items={items}
+                    setOpen={setOpen1}
+                    setValue={setMax}
+                    setItems={setItems}
+                    />
+                <Text style={{position:'absolute',left:290,top:10}}>시간</Text>
              </View>
-
-            <View style={styles.itemContainer}>
-            <Text style={styles.text,{padding:10}}>MinTime: </Text> 
-            <RNPickerSelect
-                onValueChange={(value) => minInput(value)}
-                items={[
-                    { label: '1', value: '1' },
-                    { label: '2', value: '2' },
-                    { label: '3', value: '3' },
-                    { label: '1', value: '4' },
-                    { label: '2', value: '5' },
-                    { label: '3', value: '6' },
-                 ]}/> 
+             <View style={Container}>
+           
+             <Text style={[styles.contentTitle,{left:70}]}>하루 최대 시간 </Text>
+                <DropDownPicker  style={[textInputStype,{left:'280%'}]}
+                    zIndex={2}
+                    zIndexInverse={2}
+                    open={open2}
+                    value={minTime}
+                    items={items}
+                    setOpen={setOpen2}
+                    setValue={setMin}
+                    setItems={setItems}
+                    />
+                <Text style={{position:'absolute',left:290,top:10}}>시간</Text>
              </View>
-             <View style={styles.itemContainer}>
-                <Text style={styles.text,{padding:10}}>Priority:     </Text> 
-                <RNPickerSelect style={styles.picker}
-                onValueChange={(value) => priorityInput(value)}
-                items={[
-                    { label: '1', value: '1' },
-                    { label: '2', value: '2' },
-                    { label: '3', value: '3' },
-                    { label: '1', value: '4' },
-                    { label: '2', value: '5' },
-                 ]}/> 
+             <View style={Container}>
+                <Icon3 name="bell-ring-outline" size={30} color={'gray'} style={styles.titleIcon}></Icon3>
+                <Text style={styles.contentTitle}>알림 없음</Text>
              </View>
-             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={()=>props.modalHandler()}>
-                    <Text style={styles.doneText}>Cancel
-                </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>addTodoHandler()}>
-                    <Text style={styles.doneText}>Complete
-                </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-            {rangeModal?
-            <View style={styles.dateRange_container}>
+             <View style={Container}>
+                <Icon2 name="staro" size={30} color={'gray'} style={{position:'relative',left:5,marginLeft:25, paddingRight:15,marginTop:-5,}}></Icon2>
+                <Text style={styles.contentTitle}>중요도: </Text>
+                <DropDownPicker style={[textInputStype,{left:'220%'}]}
+                    zIndex={1}
+                    zIndexInverse={3}
+                    open={open3}
+                    value={priority}
+                    items={items}
+                    setOpen={setOpen3}
+                    setValue={setPrioirty}
+                    setItems={setItems}
+                    />
+             </View>
+  
+        </KeyboardAvoidingView>
+        <Modal 
+          isVisible ={rangeModal}
+          onBackdropPress = {setRangeModal}>
+          
+            <View style={styles.rangemodal}>
+                <View style={{padding:10, alignItems:'center'}}>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={{position:'absolute', right:160, bottom:25}} onPress={SettingRangeModal}>
+                        <Icon2 name="close" size={30} color="grey" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{position:'absolute', left:160, bottom:25}}  onPress={setRange}>
+                        <Icon2 name="check" size={30} color="grey" />
+                    </TouchableOpacity>
+                </View>
+                <View style={{flexDirection:'row'}}>
+                    <Icon name="calendar-check-o" size={30} color={'gray'} style={styles.titleIcon}></Icon>
+                    <Text style={[styles.subTitle]}>시작/마감 시간 설정</Text>
+                </View>
                 <CalendarPicker
                 startFromMonday={true}
                 allowRangeSelection={true}
@@ -253,19 +321,10 @@ const Setting =(props)=> {
                 selectedDayColor="#7300e6"
                 selectedDayTextColor="#FFFFFF"
                 onDateChange={onDateChange}
-            />
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity>
-                    <Text style={styles.doneText} onPress={SettingRangeModal}>Cancel
-                </Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.doneText} onPress={setRange}>Complete
-                </Text>
-                </TouchableOpacity>
+                />
             </View>
-            </View>:<></>}
-        </ScrollView>
+            </View>
+            </Modal>
     </>
 );
 }
@@ -277,18 +336,31 @@ const Setting =(props)=> {
         paddingTop: 10,
         width:'100%'
       },
+      contentTitle:{
+        position:'relative',
+        fontSize:16, 
+        color:'gray',
+        marginBottom:5,
+      },
+      subTitle:{
+        position:'relative',
+        fontSize:18,
+        color:'gray',
+        paddingBottom:30,
+        marginBottom:5,
+      },
       buttonContainer:{
         flexDirection:"row",
         alignItems:'center'
       },
       text:{
         flex:1,
-        width:100,
-        marginLeft: 30,
+        marginLeft:20,
       },
     container: {
       position: 'absolute',
-      top:'-30%',
+
+      left:'-10%',
       height: '130%',
       width: '100%',
       color: 'transparent'
@@ -314,6 +386,16 @@ const Setting =(props)=> {
     picker:{
         marginLeft:30,
     },
+    icon:{
+        marginRight:20, marginTop:-5,
+    },
+    titleIcon:{
+        position:'relative',
+        left:5,
+        marginLeft:25, 
+        paddingRight:15,
+        marginTop:-5,
+    },
     btn_container: {
         alignItems:'center',
         justifyContent:'center',
@@ -330,20 +412,19 @@ const Setting =(props)=> {
       backgroundColor: 'rgba(0,0,0,0.5)'
     },
     ddayInput: {
-    position:'relative',
-        left:'50%',
+      position:'relative',
       width:'70%',
-      backgroundColor: 'white',
-      marginBottom: 20,
       borderBottomWidth: 1,
+      fontSize:25,
+      fontWeight:"bold",
+      color:'#999999',
       borderBottomColor: '#a5a5a5'
     },
     modal: {
-      marginHorizontal: 20,
-      borderRadius: 10,
-      alignItems: 'center',
-      marginTop: '50%',
-      backgroundColor: 'white',
+        height: '85%',
+        borderRadius: 10,
+        alignItems: 'center',
+        backgroundColor: 'white',
     },
     doneText: {
       color: 'rgb(1,123,255)',
@@ -357,6 +438,16 @@ const Setting =(props)=> {
     color:{
         paddingRight:10,
         paddingTop:5
+    },
+    rangemodal:{
+        height:'85%',
+        width:'108%',
+        position:'relative', 
+        right:'4%',
+        borderRadius: 10,
+        alignItems: 'center',
+        backgroundColor: 'white',
+        justifyContent:'center',
     }
   });
   export default Setting;

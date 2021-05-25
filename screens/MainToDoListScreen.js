@@ -5,20 +5,22 @@ import Setting from '../rn_modules/Setting';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/Ionicons';
+import { ProgressBar, Colors } from 'react-native-paper';
+import Modal from 'react-native-modal';
 
 
 export function requestList(){
   return [
-    { id:0,title: "정기회의1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4,color:'red'},
-  { id:1,title: "교육세션1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4,color:'blue'}, 
-  { id:2,title: "정기회의2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4, color:'blue'}, 
-  {id:3, title: "교육세션2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime:3,priority:4, color:'yellow'}, 
-  { id:4,title: "정기회의3", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:12,
-  minTime:1, maxTime: 3,priority:4, color:'red'}, 
+    { id:0,title: "정기회의1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
+  minTime:"1", maxTime:"3",priority:"4",color:'#ED6B58', process:0.64},
+  { id:1,title: "교육세션1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
+  minTime:"1", maxTime:"3",priority:"4",color:'#6178C3', process:0.20}, 
+  { id:2,title: "정기회의2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
+  minTime:"1", maxTime:"3",priority:"4", color:'#F19D4E',process:0.80}, 
+  {id:3, title: "교육세션2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
+  minTime:"1", maxTime:"3",priority:"4", color:'#439459',process:0.1}, 
+  { id:4,title: "정기회의3", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
+  minTime:"1", maxTime: "3",priority:"4", color:'#8A2DA3',process:0.64}, 
    ];
   }
 
@@ -44,7 +46,7 @@ const getBackgroundColor = (userItem) => {
 };
 
 const getHeight = (userIndex) => {
-  const height = 130;
+  const height = 180;
   return height;
 };
 
@@ -53,26 +55,38 @@ const getItemStyleTweaks = (userItem,unselectList,active) => {
   return {
     backgroundColor: getSelectedColor(userItem,unselectList,active),
     height: getHeight(userIndex),
+    borderColor:userItem.color,
+    borderWidth:getBorderWidth(userItem,unselectList,active)
   };
 };
  
 const handleSelected = (id,unselectList)=>{
   return{
     backgroundColor: getSelectedColor(id,unselectList),
-    height:130,
+    height:150,
   } 
 };
+const getBorderWidth=(item,unselectList,active)=>{
+  let width=0;
+  if(unselectList.find(el=>el.id===item.id)){
+    ;
+  }  else{
+    if(active)
+      width=6;
+  
+  }
+  return width;
+}
 
 const getSelectedColor=(item,unselectList,active)=>{
   let color= '#aaffaa';
-  if(unselectList.find(el=>el.id===item.id))
-      color='#rgba(0,0,0,0.1)';
-  else{
-    if(active)
-      color='#aaffaa'; // item.color로 추후 변경 예정
-    else 
-      color='#rgba(0,0,0,0.1)';
-  }
+    let r = parseInt(item.color.slice(1, 3), 16);
+    let g = parseInt(item.color.slice(3, 5), 16);
+    let b = parseInt(item.color.slice(5, 7), 16);
+
+    color= "rgba(" + r + ", " + g + ", " + b + ", " + 0.3 + ")";
+  
+   
   return color;
 };
 
@@ -82,11 +96,12 @@ const MainToDoListScreen = ({navigation}) => {
   // 1. todo 추가
   const addTodo = (newTitle, newStart, newEnd, newDuration, newMin, newMax, newPriority,newColor) => {
     const newItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
-      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor} 
-    if(edit){
+      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor,process:0} 
+   
+      if(edit){
       setId(editId)
       const originItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd,
-        duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor} 
+        duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor,process:0} 
       setTodos(todos.map(todo=>todo.id==editId?originItem:todo));
       setEditId(null);
       setId(todos.length);
@@ -170,11 +185,27 @@ const MainToDoListScreen = ({navigation}) => {
   
   // 4. 선택된 elemnt
   const [active,setActive]=useState(false);
-  const [check,setCheck] = useState(false);
+  const [check,setCheck] = useState(true);
 
   function SettingActive(){
+    console.log(active);
+    if(!active)setUnselected(todos);
     setActive(!active);
   }
+  const [unselectList,setUnselected]=useState(todos);
+  function SettingChecked(item){
+    if(active){
+      if(count==0 || unselectList.indexOf(item)>-1){
+        setUnselected(unselectList.filter(el=>el.id!==item.id));
+        console.log("hello");
+      }
+      else {setUnselected(()=>[...unselectList,item]);
+    console.log("hi");}
+    SettingCount();
+  }
+}
+  
+
   // 5. edit
   const [editId,setEditId]=useState(null);
   function settingEditID(item){
@@ -187,35 +218,34 @@ const MainToDoListScreen = ({navigation}) => {
     setEditList(todos.filter(todo=>todo.id==item.id));
     setEditId(item.id);
     SettingModal();
-    setEdit(false);
   }
-  const [count,setCount]=useState('0');
+  const [count,setCount]=useState(0);
   function SettingCount(){
     setCount(count+1);
   }
-  
-  const [unselectList,setUnselected]=useState(requestList());
-  function SettingChecked(item){
-    if(active){
-      SettingCount();
-      if(count==1){
-        setCheck(true);
-      }
-      else if(unselectList.indexOf(item)>-1)setCheck(true);
-      else setCheck(false)
-      if(check){
-        setUnselected(unselectList.filter(el=>el.id!==item.id));
-      }
-      else{
-        setUnselected(()=>[...unselectList,item]);
-      }
-    }
+
+  function Plus(){
+    SettingModal();
+    setEdit(false);
   }
+
+  // item select
+
   return (
     <View style={{flex:1}}>
-      <Text style={styles.mainTitle}>ToDo-List</Text>
       <DraxProvider>
+
       <View style={styles.container}>
+        <TouchableOpacity style={styles.btn}
+          onPress={() => SettingActive()}>
+            <Text  style={styles.buttonText}>선택</Text>
+        </TouchableOpacity>
+        <View style={styles.btn_container}>
+          <TouchableOpacity onPress={Plus}>
+          <Icon name="pluscircleo" size={25} color="blue"/>
+          </TouchableOpacity>
+        </View>
+
           <DraxList
             data={todos}
             renderItemContent={({ item }) => (
@@ -245,7 +275,10 @@ const MainToDoListScreen = ({navigation}) => {
                   <Icon name="delete" size={22} color="red" />
                 </Text>
               </TouchableOpacity> 
+              <ProgressBar style={{position:"relative", top:5, left:'48%', width:150, height:22}} progress={parseFloat(item.process)} color={item.color}  />
+              <Text style={{position:"relative", bottom:18, left:'50%',color:'white', fontWeight:'bold'}}>{item.process}%</Text>
               </TouchableOpacity>
+              
             )}
             onItemReorder={({ fromIndex, toIndex }) => {
               const newData = todos.slice();
@@ -255,25 +288,23 @@ const MainToDoListScreen = ({navigation}) => {
             
             keyExtractor={(item) => item}
           />
-        <View style={styles.btn_container}>
-          <TouchableOpacity onPress={()=>SettingModal()}>
-          <Icon3 name="add-circle" size={70} color="#00B9AD"/>
-          </TouchableOpacity>
-        </View>
+       
         </View>
       </DraxProvider>
-      <View style={styles.btn_container2}>
-        <TouchableOpacity style={styles.btn}
+      <View style={{width:'100%', justifyContent:'center',alignItems:'center',backgroundColor:'white'}}>
+        <TouchableOpacity style={styles.btn_container2}
         onPress={() => navigation.navigate('Recommend')}>
-          <Text style={styles.buttonText}>Recommend</Text></TouchableOpacity>
-      <TouchableOpacity style={styles.btn}
-        onPress={() => SettingActive()}>
-          <Text  style={styles.buttonText}>Select</Text>
-      </TouchableOpacity>
+          <Icon2 name="magic" size={22} color="white" />
+          <Text style={{color:'white', margin:6, fontSize:15}}>Plan Maker</Text></TouchableOpacity>
+     
       </View>
-      {modal?<Setting onAddTodo={addTodo} idHandler={SettingId} 
-      modalHandler={SettingModal} editSign={edit} editItem={editList}/>:<></>}
-
+      <Modal 
+          isVisible ={modal}
+          onBackdropPress = {SettingModal}>
+          <Setting onAddTodo={addTodo} idHandler={SettingId} 
+      modalHandler={SettingModal} editSign={edit} editItem={editList}/>
+        </Modal>
+    
    </View>
   );
 }
@@ -283,6 +314,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     paddingTop: 40,
+    backgroundColor:'white',
   },
   mainTitle:{
     fontSize: 25,
@@ -290,21 +322,25 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: -25,
   },
-  btn:{
-   marginRight:10,
-   width:'40%',
+  btn:{  // 선택
+   position:'absolute',
+   top:10,
+   left:15,
   },
-  btn_container: {
-      position: "absolute",
-      bottom:10,
-      right:5,
+  btn_container: {  // + 버튼
+    position: "absolute",
+    top:5,
+    right:10,
    },
    btn_container2: {
     flexDirection:'row',
-    backgroundColor:'#rgba(260,260,260,0.1)',
-    width:'100%',
-    height: '7%',
+    backgroundColor:"#4E5CF6",
+    width:'30%',
+    position:'relative',
+    left:'30%',
+    padding:3,
     justifyContent:'center',
+    borderRadius:6,
   },
    title: {
       fontSize: 17,
@@ -358,14 +394,34 @@ const styles = StyleSheet.create({
  
   buttonText:{
     textAlign:'center',
-    paddingTop: '5%',
-    color:`#00B9AD`,
-    fontSize:20,
+    color:'blue',
+    fontSize:18,
   },
   color:{
     flexDirection:'row',
     paddingRight:10,
-}
+},
+centeredView: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: 22
+},
+modalView: {
+  margin: 20,
+  backgroundColor: "white",
+  borderRadius: 20,
+  padding: 35,
+  alignItems: "center",
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5
+},
 });
 
 export default MainToDoListScreen;
