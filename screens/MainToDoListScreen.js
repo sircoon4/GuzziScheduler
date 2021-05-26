@@ -80,6 +80,7 @@ const getBorderWidth=(item,unselectList,active)=>{
 
 const getSelectedColor=(item,unselectList,active)=>{
   let color= '#aaffaa';
+  
     let r = parseInt(item.color.slice(1, 3), 16);
     let g = parseInt(item.color.slice(3, 5), 16);
     let b = parseInt(item.color.slice(5, 7), 16);
@@ -175,6 +176,7 @@ const MainToDoListScreen = ({navigation}) => {
  // 2. todo 삭제
   const onRemove = id =>{
     setTodos(todos.filter(todo=>todo.id!==id));
+    setModal(!modal)
   };
 
   // 3. todo 추가를 위한 사용자 입력 화면
@@ -203,6 +205,9 @@ const MainToDoListScreen = ({navigation}) => {
     console.log("hi");}
     SettingCount();
   }
+  else{
+    SettingEdit(item)
+ }
 }
   
 
@@ -260,21 +265,7 @@ const MainToDoListScreen = ({navigation}) => {
                   duration: {item.duration}(h)                       priority: {item.priority}{"\n"}
                   minTime: {item.minTime}(h)                         maxTime: {item.maxTime}(h){"\n"}
                 </Text>
-                <TouchableOpacity style={styles.editIcon}>
-                <Text onPress={()=>SettingEdit(item)}>
-                  <Icon name="edit" size={20} color="black" />
-                </Text>
-              </TouchableOpacity> 
-                <TouchableOpacity style={styles.completeIcon}>
-                <Text onPress={()=>showCompleteAlert(item)}>
-                  <Icon name="circledowno" size={20} color="blue" />
-                </Text>
-              </TouchableOpacity> 
-              <TouchableOpacity style={styles.deleteIcon}>
-                <Text onPress={()=>showDelteAlert(item)}>
-                  <Icon name="delete" size={22} color="red" />
-                </Text>
-              </TouchableOpacity> 
+                
               <ProgressBar style={{position:"relative", top:5, left:'48%', width:150, height:22}} progress={parseFloat(item.process)} color={item.color}  />
               <Text style={{position:"relative", bottom:18, left:'50%',color:'white', fontWeight:'bold'}}>{item.process}%</Text>
               </TouchableOpacity>
@@ -302,7 +293,7 @@ const MainToDoListScreen = ({navigation}) => {
           isVisible ={modal}
           onBackdropPress = {SettingModal}>
           <Setting onAddTodo={addTodo} idHandler={SettingId} 
-      modalHandler={SettingModal} editSign={edit} editItem={editList}/>
+      modalHandler={SettingModal} editSign={edit} editItem={editList} onRemove={onRemove}/>
         </Modal>
     
    </View>

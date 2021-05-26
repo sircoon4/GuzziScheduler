@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {View, StyleSheet,Text, TextInput, Image,TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
+import {View, StyleSheet,Text, TextInput, Alert,TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import CalendarPicker from 'react-native-calendar-picker';
 import { RadioButton } from 'react-native-paper';
@@ -179,6 +179,31 @@ const Setting =(props)=> {
               </View>
             </View>
         )
+        // edit 시 삭제
+        const showDelteAlert = (item) =>
+        Alert.alert(
+            "Delete Todo",
+            "Are you sure you want to delete",
+            [
+            {
+                text: "Cancel",
+                onPress: () => Alert.alert(
+                "",
+                "Cancel."),
+                style: "cancel",
+            },
+            {
+                text: "Delete",
+                onPress: () => {
+                Alert.alert(
+                    "",
+                    "Deleted successfully.");    
+                props.onRemove(item.id)
+                },
+                style: "default",
+            }
+            ],
+        );
 
 
       return(
@@ -292,7 +317,11 @@ const Setting =(props)=> {
                     setItems={setItems}
                     />
              </View>
-  
+             {sign?<TouchableOpacity style={styles.deleteIcon}>
+                <Text onPress={()=>showDelteAlert(item)}>
+                  <Icon2 name="delete" size={30} color="blue" />
+                </Text>
+              </TouchableOpacity> :<></>}
         </KeyboardAvoidingView>
         <Modal 
           isVisible ={rangeModal}
@@ -301,17 +330,14 @@ const Setting =(props)=> {
             <View style={styles.rangemodal}>
                 <View style={{padding:10, alignItems:'center'}}>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={{position:'absolute', right:160, bottom:25}} onPress={SettingRangeModal}>
+                    <TouchableOpacity style={{position:'absolute', right:160, bottom:30}} onPress={SettingRangeModal}>
                         <Icon2 name="close" size={30} color="grey" />
                     </TouchableOpacity>
                     <TouchableOpacity style={{position:'absolute', left:160, bottom:25}}  onPress={setRange}>
                         <Icon2 name="check" size={30} color="grey" />
                     </TouchableOpacity>
                 </View>
-                <View style={{flexDirection:'row'}}>
-                    <Icon name="calendar-check-o" size={30} color={'gray'} style={styles.titleIcon}></Icon>
-                    <Text style={[styles.subTitle]}>시작/마감 시간 설정</Text>
-                </View>
+                
                 <CalendarPicker
                 startFromMonday={true}
                 allowRangeSelection={true}
@@ -421,7 +447,7 @@ const Setting =(props)=> {
       borderBottomColor: '#a5a5a5'
     },
     modal: {
-        height: '85%',
+        height: '87%',
         borderRadius: 10,
         alignItems: 'center',
         backgroundColor: 'white',
@@ -439,6 +465,11 @@ const Setting =(props)=> {
         paddingRight:10,
         paddingTop:5
     },
+    deleteIcon: {
+        position:'absolute',
+        left:340,
+        bottom: 5,
+      },
     rangemodal:{
         height:'85%',
         width:'108%',
@@ -448,6 +479,6 @@ const Setting =(props)=> {
         alignItems: 'center',
         backgroundColor: 'white',
         justifyContent:'center',
-    }
+    },
   });
   export default Setting;
