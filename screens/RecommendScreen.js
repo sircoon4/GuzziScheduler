@@ -280,8 +280,6 @@ function RecommendScreen({ navigation, route }){
       const cellColorEvent = (day)=>{
         return(
         {
-          color:'black',
-          fontSize:17,
           backgroundColor: '#ffffff',
           borderLeftWidth:4,
           borderColor:day.color,
@@ -321,7 +319,7 @@ function RecommendScreen({ navigation, route }){
 
       return (
         <View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', margin:10}}>
             <Icon name="close" size={34} color="grey" onPress={() => navigation.navigate('MainToDo')} />
             <Icon name="check" size={34} color="grey" onPress={confirmEvent} />
           </View>  
@@ -336,7 +334,6 @@ function RecommendScreen({ navigation, route }){
           swipeEnabled={true}
           showTime={false}
           eventCellStyle={(day)=>cellColorEvent(day)}
-          //eventCellStyle={styles.title}
           style={{color:'black'}}
           />
         
@@ -344,15 +341,6 @@ function RecommendScreen({ navigation, route }){
       );
 }
 
-// const styles = StyleSheet.create({
-//   title: {
-//     color:'black',
-//     fontSize:17,
-//     backgroundColor: '#ffffff',
-//     borderLeftWidth:4,
-//     borderColor:day.color,
-//   }
-// });
 
 
 
