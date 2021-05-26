@@ -28,21 +28,25 @@ const Tab = createBottomTabNavigator();
 
 
 function ProfileHeader() {
-  var profilePath;
-
-  profilePath = require('./images/defaultProfile.jpg');
+  const profilePath = require('./images/skyyy_round.png');
 
   return (
     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-      <Image
-        style={{ width: 50, height: 50 }}
-        source={profilePath}
-      />
-      <Text>Hello, world!</Text>
-      <Button
-        title="Sign Out"
-        onPress={() => auth().signOut()}
-      />
+      <View style={{flex: 1}}>
+        <Image
+          style={{ width: 50, height: 50 }}
+          source={profilePath}
+        />
+      </View>
+      <View style={{flex:3, justifyContent:'flex-end'}}>
+        <Text style={{fontSize: 20}}>2021년 5월</Text>
+      </View>
+      <View style={{flex:1, backgroundColor: 'green'}}>
+        <Button
+          title="Sign Out"
+          onPress={() => auth().signOut()}
+        />
+      </View>
     </View>
   );
 }
@@ -101,7 +105,7 @@ function App() {
       <Stack.Navigator 
         initialRouteName="Main"
         screenOptions={{
-          headerTitle: props => <ProfileHeader {...props} />
+          headerShown: false
         }}
       >
         <Stack.Screen name="Main" component={MainTab} />

@@ -5,6 +5,10 @@ import {Agenda} from 'react-native-calendars';
 import Modal from 'react-native-modal';
 import ScheduleBuilder from '../rn_modules/ScheduleBuilder';
 
+import Icon from 'react-native-vector-icons/Feather';
+
+import auth from '@react-native-firebase/auth';
+
 const testIDs = require('../testIDs');
 
 export default class MainCalendarScreen extends Component {
@@ -17,9 +21,35 @@ export default class MainCalendarScreen extends Component {
     };
   }
 
+  ProfileHeader() {
+    const profilePath = require('../images/skyyy_round.png');
+  
+    return (
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', height: 60, backgroundColor: 'white'}}>
+        <View style={{flex: 1}}>
+          <Image
+            style={{ width: 50, height: 50, marginLeft: 15, marginTop: 5 }}
+            source={profilePath}
+          />
+        </View>
+        <View style={{flex:3, justifyContent:'flex-end'}}>
+          <Text style={{fontSize: 23, marginLeft: 10, marginBottom: 5}}>2021년 5월</Text>
+        </View>
+        <View style={{flex:1, justifyContent:'flex-end'}}>
+          <TouchableOpacity
+            onPress={() => auth().signOut()}
+          >
+            <Icon name = "search" size={30} style={{marginBottom: 10}}/>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
+        {this.ProfileHeader()}
         <Agenda
           testID={testIDs.agenda.CONTAINER}
           items={this.state.items}
@@ -79,7 +109,7 @@ export default class MainCalendarScreen extends Component {
           for (let j = 0; j < numItems; j++) {
             this.state.items[strTime].push({
               name: 'Item for ' + strTime + ' #' + j,
-              height: Math.max(50, Math.floor(Math.random() * 150))
+              height: 50
             });
           }
         }
@@ -133,7 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginRight: 10,
-    marginTop: 17
+    marginTop: 5
   },
   emptyDate: {
     height: 15,
