@@ -53,9 +53,9 @@ function IntroScreen({ navigation }) {
       }
 
       if(titleAlpha >= 100 && titleShadow >= 55) {
-        setTimeout(function() {
-          navigation.navigate("Login");
-        }, 1000);
+        // setTimeout(function() {
+        // }, 1000);
+        navigation.navigate("Login");
       }
     }, 5)
   }

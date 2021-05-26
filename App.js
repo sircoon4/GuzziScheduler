@@ -23,6 +23,9 @@ import TestScreen from './screens/TestScreen';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
+import FAIcon from 'react-native-vector-icons/FontAwesome';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -117,9 +120,21 @@ function App() {
 
 function MainTab() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="MainCalendar" component={MainCalendarScreen} />
-      <Tab.Screen name="MainToDo" component={MainToDoListScreen} />
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          if (route.name === 'Calendar') {
+            return <AntIcon name='calendar' size={size} color={color} />;
+          } else if (route.name === 'Plan Maker') {
+            return <FAIcon name='magic' size={size} color={color} />;
+          } else if (route.name === 'Setting') {
+            return <AntIcon name='setting' size={size} color={color} />;
+          }
+        },
+      })}
+    >
+      <Tab.Screen name="Calendar" component={MainCalendarScreen} />
+      <Tab.Screen name="Plan Maker" component={MainToDoListScreen} />
       <Tab.Screen name="Setting" component={SettingScreen} />
     </Tab.Navigator>
   );
