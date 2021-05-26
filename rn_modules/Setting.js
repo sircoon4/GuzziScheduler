@@ -61,20 +61,16 @@ const Setting =(props)=> {
   
     
     const textInputStype = {
-        position:'relative',
-        bottom:5,
-        height: 35,
+        height:35,
         width:80,
         borderRadius:7,
         borderWidth: 1,
-        borderColor:'#555555'
+        borderColor:'#555555',
         }
       
       const Container = {
-        width: '100%',
         flexDirection:'row',
-        marginLeft:50,
-        paddingVertical:10,
+        paddingVertical:'3%'
       }
 
       // picker (maxTime, minTime, prioirty 설정) 관련 변수
@@ -211,21 +207,22 @@ const Setting =(props)=> {
         <KeyboardAvoidingView style={styles.modal}
         behavior="padding" enabled={Platform.OS === "android"}>
         <View style={styles.buttonContainer}>
-            <TouchableOpacity style={{position:'relative', right:150, top:10}} onPress={()=>props.modalHandler()}>
+            <TouchableOpacity onPress={()=>props.modalHandler()} style={{position:'absolute'}}>
                 <Icon2 name="close" size={30} color="grey" />
             </TouchableOpacity>
-            <TouchableOpacity style={{position:'relative', left:150, top:10}}  onPress={()=>addTodoHandler()}>
+            <TouchableOpacity  onPress={()=>addTodoHandler()} style={{position:'absolute',right:'0%'}}>
                 <Icon2 name="check" size={30} color="grey" />
             </TouchableOpacity>
             </View>
-        <View style={[Container,{marginVertical:10}]}>
+        <View style={{paddingHorizontal:'6%'}}>
+        <View style={[Container,{paddingTop:'12%',paddingBottom:'6%'}]}>
         <Tooltip 
                 isVisible={showTip}
                 content={createToolTip}
                 onClose={() => setTip(false)}
                 placement="bottom"
                 closeOnContentInteraction={false}>
-                <TouchableOpacity style={{ position:'relative',top:20,left:5, paddingRight:15}}
+                <TouchableOpacity style={{position:'relative',top:'20%'}}
                     onPress={() => setTip(true)}>
                     <Icon name = "circle" size={30} color={color}/>
                 </TouchableOpacity>
@@ -235,11 +232,12 @@ const Setting =(props)=> {
             value={title}
             onChangeText={titleInput}></TextInput>
         </View>
+        <View style={{paddingHorizontal:'7%'}}>
         <View style={Container}>
-            <Icon name="calendar-check-o" size={25} color={'gray'} style={styles.titleIcon}></Icon>
+            <Icon name="calendar-check-o" size={25} color={'gray'}></Icon>
             <Text style={[styles.contentTitle]}>시작/마감 시간 설정</Text>
         </View>
-        <View style={[Container,{left:45}]}>
+        <View style={[Container],{paddingHorizontal:'7%', paddingBottom:'5%'}}>
             <TouchableOpacity  onPress={()=>SettingRangeModal()}>
                 <View style={{flexDirection:'row'}}>
                 <Icon3 name = "ray-start-arrow" size={30} color={'#4E5CF6'}
@@ -255,9 +253,9 @@ const Setting =(props)=> {
         </View>
         
  
-        <View style={Container}>
-            <Icon4 name="alarm-outline" size={30} color={'gray'} style={styles.titleIcon}></Icon4>
-            <Text style={[styles.contentTitle]}>총 소요시간 </Text>
+        <View style={[Container,{paddingBottom:'2%'}]}>
+            <Icon4 name="alarm-outline" size={30} color={'gray'} ></Icon4>
+            <Text style={styles.contentTitle}>총 소요시간 </Text>
             <TextInputMask
             type={'datetime'}
             options={{
@@ -265,15 +263,12 @@ const Setting =(props)=> {
             }}
             value={duration}
             onChangeText={text => {durationInput(text)}}
-            style={[textInputStype,{left:'130%'}]}
+            style={[textInputStype,{position:'relative',right:'88%'}]}
             />
-            <Text style={{position:'relative',left:60}}>시간</Text>
         </View>
-            <View style={Container}>
-              
-                <Text style={[styles.contentTitle,{left:70}]}>하루 최소 시간 </Text>
-                <DropDownPicker  style={[textInputStype,{left:'280%'}]}
-                    zIndex={3}
+        <View style={[Container,{paddingBottom:'2%'}]}>
+                <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최소 시간 </Text>
+                <DropDownPicker  style={[textInputStype]}
                     zIndexInverse={1}
                     open={open1}
                     value={maxTime}
@@ -282,12 +277,12 @@ const Setting =(props)=> {
                     setValue={setMax}
                     setItems={setItems}
                     />
-                <Text style={{position:'absolute',left:290,top:10}}>시간</Text>
+                
              </View>
-             <View style={Container}>
+        <View style={[Container,{paddingBottom:'2%'}]}>
            
-             <Text style={[styles.contentTitle,{left:70}]}>하루 최대 시간 </Text>
-                <DropDownPicker  style={[textInputStype,{left:'280%'}]}
+             <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최대 시간 </Text>
+                <DropDownPicker  style={[textInputStype]}
                     zIndex={2}
                     zIndexInverse={2}
                     open={open2}
@@ -297,16 +292,15 @@ const Setting =(props)=> {
                     setValue={setMin}
                     setItems={setItems}
                     />
-                <Text style={{position:'absolute',left:290,top:10}}>시간</Text>
              </View>
              <View style={Container}>
-                <Icon3 name="bell-ring-outline" size={30} color={'gray'} style={styles.titleIcon}></Icon3>
+                <Icon3 name="bell-ring-outline" size={30} color={'gray'}></Icon3>
                 <Text style={styles.contentTitle}>알림 없음</Text>
              </View>
              <View style={Container}>
-                <Icon2 name="staro" size={30} color={'gray'} style={{position:'relative',left:5,marginLeft:25, paddingRight:15,marginTop:-5,}}></Icon2>
+                <Icon2 name="staro" size={30} color={'gray'} ></Icon2>
                 <Text style={styles.contentTitle}>중요도: </Text>
-                <DropDownPicker style={[textInputStype,{left:'220%'}]}
+                <DropDownPicker style={[textInputStype,{position:'relative',right:'88%'}]}
                     zIndex={1}
                     zIndexInverse={3}
                     open={open3}
@@ -317,23 +311,26 @@ const Setting =(props)=> {
                     setItems={setItems}
                     />
              </View>
+             <View style={Container}>
              {sign?<TouchableOpacity style={styles.deleteIcon}>
                 <Text onPress={()=>showDelteAlert(item)}>
-                  <Icon2 name="delete" size={30} color="blue" />
+                  <Icon2 name="delete" size={30} color="#4E5CF6" />
                 </Text>
               </TouchableOpacity> :<></>}
+              </View>
+              </View>
+              </View>
         </KeyboardAvoidingView>
         <Modal 
           isVisible ={rangeModal}
           onBackdropPress = {setRangeModal}>
           
             <View style={styles.rangemodal}>
-                <View style={{padding:10, alignItems:'center'}}>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={{position:'absolute', right:160, bottom:30}} onPress={SettingRangeModal}>
+                <View style={{marginBottom:'25%'}}>
+                    <TouchableOpacity  style={{position:'absolute',margin:'1%'}} onPress={SettingRangeModal}>
                         <Icon2 name="close" size={30} color="grey" />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{position:'absolute', left:160, bottom:25}}  onPress={setRange}>
+                    <TouchableOpacity style={{position:'absolute',right:'1%',marginVertical:'1%'}} onPress={setRange}>
                         <Icon2 name="check" size={30} color="grey" />
                     </TouchableOpacity>
                 </View>
@@ -348,7 +345,7 @@ const Setting =(props)=> {
                 selectedDayTextColor="#FFFFFF"
                 onDateChange={onDateChange}
                 />
-            </View>
+           
             </View>
             </Modal>
     </>
@@ -363,10 +360,11 @@ const Setting =(props)=> {
         width:'100%'
       },
       contentTitle:{
-        position:'relative',
+        width:'60%',
         fontSize:16, 
         color:'gray',
-        marginBottom:5,
+        marginHorizontal:'4%',
+        marginBottom:'3%',
       },
       subTitle:{
         position:'relative',
@@ -376,8 +374,8 @@ const Setting =(props)=> {
         marginBottom:5,
       },
       buttonContainer:{
-        flexDirection:"row",
-        alignItems:'center'
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
       },
       text:{
         flex:1,
@@ -438,19 +436,21 @@ const Setting =(props)=> {
       backgroundColor: 'rgba(0,0,0,0.5)'
     },
     ddayInput: {
-      position:'relative',
-      width:'70%',
+      width:'95%',
       borderBottomWidth: 1,
       fontSize:25,
       fontWeight:"bold",
       color:'#999999',
-      borderBottomColor: '#a5a5a5'
+      borderBottomColor: '#a5a5a5',
+      marginLeft:'2%'
     },
     modal: {
-        height: '87%',
+        height: '85%',
         borderRadius: 10,
-        alignItems: 'center',
         backgroundColor: 'white',
+        paddingVertical:10,
+        paddingHorizontal:5
+
     },
     doneText: {
       color: 'rgb(1,123,255)',
@@ -467,18 +467,15 @@ const Setting =(props)=> {
     },
     deleteIcon: {
         position:'absolute',
-        left:340,
-        bottom: 5,
+        right:'-15%',
+        paddingTop:'5%'
       },
     rangemodal:{
         height:'85%',
-        width:'108%',
-        position:'relative', 
-        right:'4%',
+        width:'105%',
         borderRadius: 10,
-        alignItems: 'center',
         backgroundColor: 'white',
-        justifyContent:'center',
+        
     },
   });
   export default Setting;
