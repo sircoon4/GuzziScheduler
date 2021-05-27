@@ -458,7 +458,9 @@ const Setting =(props)=> {
       marginLeft:'2%'
     },
     modal: {
+        position:'absolute',
         height: '85%',
+        width:'100%',
         borderRadius: 10,
         backgroundColor: 'white',
         paddingVertical:10,
