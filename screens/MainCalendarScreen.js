@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, StyleSheet, Text, View, TouchableOpacity, Image, Button} from 'react-native';
+import {Alert, StyleSheet, Text, View, TouchableOpacity, Image, Button, KeyboardAvoidingView} from 'react-native';
 
 import {Agenda} from 'react-native-calendars';
 import Modal from 'react-native-modal';
@@ -18,6 +18,7 @@ export default class MainCalendarScreen extends Component {
     this.state = {
       isModalVisible: false,
       items: {},
+      selectedTime: this.timeToString(new Date()),
     };
   }
 
@@ -48,16 +49,28 @@ export default class MainCalendarScreen extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <KeyboardAvoidingView
+        style={{flex: 1, backgroundColor: 'white'}}
+        behavior = "padding"
+        enable = {true}
+      >
         {this.ProfileHeader()}
         <Agenda
           testID={testIDs.agenda.CONTAINER}
           items={this.state.items}
           loadItemsForMonth={this.loadItems.bind(this)}
-          selected={'2017-05-16'}
+          selected={this.state.selectedTime}
           renderItem={this.renderItem.bind(this)}
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
+          theme={{
+            backgroundColor: '#FEFEFE',
+            // calendarBackground: 'white',
+            // agendaDayTextColor: 'yellow',
+            // agendaDayNumColor: 'green',
+            // agendaTodayColor: 'red',
+            // agendaKnobColor: 'blue'
+          }}
           // markingType={'period'}
           // markedDates={{
           //    '2017-05-08': {textColor: '#43515c'},
@@ -79,13 +92,19 @@ export default class MainCalendarScreen extends Component {
               <Image style={{width: 60, height: 60}} source={require('../images/blue_plus_button.png')} />
           </TouchableOpacity>
         </View>
-        <Modal 
+        <Modal
           isVisible = {this.state.isModalVisible}
           onBackdropPress = {() => this.toggleModal()}
+          avoidKeyboard = {true}
         >
-          <ScheduleBuilder saveSchedule = {(data) => this.saveSchedule(data)}/>
+          <ScheduleBuilder
+            modalHandler = {() => this.toggleModal()}
+            saveSchedule = {(data) => this.saveSchedule(data)}
+            editSign = {false}
+            editItem = {null}
+          />
         </Modal>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -99,10 +118,12 @@ export default class MainCalendarScreen extends Component {
   };
 
   loadItems(day) {
+    console.log(day);
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
+        //console.log(strTime);
         if (!this.state.items[strTime]) {
           this.state.items[strTime] = [];
           const numItems = Math.floor(Math.random() * 3 + 1);
@@ -130,10 +151,32 @@ export default class MainCalendarScreen extends Component {
     return (
       <TouchableOpacity
         testID={testIDs.agenda.ITEM}
-        style={[styles.item, {height: item.height}]}
+        style={[styles.item, {height: 70}]}
         onPress={() => Alert.alert(item.name)}
       >
-        <Text>{item.name}</Text>
+        {/* <View style={{flexDirection: 'row'}}>
+          <View style={{flex:5, backgroundColor: 'red', height: 65}}>
+
+          </View>
+          <View style={{flex:80, marginLeft: 10, backgroundColor: 'white'}}>
+
+          </View>
+          <View style={{flex:252, backgroundColor: 'white'}}>
+            <Text>{item.name}</Text>
+          </View>
+        </View> */}
+
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flex:5, backgroundColor: 'red', height: 75, marginTop: 5}}>
+
+          </View>
+          <View style={{flex:80, marginLeft: 5, backgroundColor: 'transparent', height: 75 }}>
+
+          </View>
+          <View style={{flex:252, backgroundColor: 'transparent', height: 75 }}>
+            <Text>{item.name}</Text>
+          </View>
+        </View>
       </TouchableOpacity>
     );
   }
@@ -158,12 +201,15 @@ export default class MainCalendarScreen extends Component {
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     flex: 1,
     borderRadius: 5,
-    padding: 10,
+    //padding: 10,
     marginRight: 10,
-    marginTop: 5
+    marginTop: 15,
+    //borderBottomWidth:1, 
+    borderTopWidth:1,
+    borderColor: '#EEEEEE'
   },
   emptyDate: {
     height: 15,
