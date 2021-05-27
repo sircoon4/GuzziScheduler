@@ -4,24 +4,26 @@ import { DraxProvider, DraxView ,DraxList} from 'react-native-drax';
 import Setting from '../rn_modules/Setting';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
-import Icon3 from 'react-native-vector-icons/Ionicons';
+import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon4 from 'react-native-vector-icons/Feather';
 import { ProgressBar, Colors } from 'react-native-paper';
 import Modal from 'react-native-modal';
 
 
 export function requestList(){
   return [
-    { id:0,title: "정기회의1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
+    { id:0,title: "큐시즘 영상제작", startDate: "2021-05-27" ,endDate:"2021-06-02",duration:"3",
   minTime:"1", maxTime:"3",priority:"4",color:'#ED6B58', process:0.64},
-  { id:1,title: "교육세션1", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
-  minTime:"1", maxTime:"3",priority:"4",color:'#6178C3', process:0.20}, 
-  { id:2,title: "정기회의2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
-  minTime:"1", maxTime:"3",priority:"4", color:'#F19D4E',process:0.80}, 
-  {id:3, title: "교육세션2", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
-  minTime:"1", maxTime:"3",priority:"4", color:'#439459',process:0.1}, 
-  { id:4,title: "정기회의3", startDate: "2020-05-11" ,endDate:"2020-05-12",duration:"12",
-  minTime:"1", maxTime: "3",priority:"4", color:'#8A2DA3',process:0.64}, 
+  { id:1,title: "헬시즘", startDate: "2021-05-27" ,endDate:"2021-05-30",duration:"4",
+  minTime:"1", maxTime:"4",priority:"6",color:'#6178C3', process:0.20}, 
+  { id:2,title: "큐시즘 출사 소모임", startDate: "2021-05-27" ,endDate:"2021-05-31",duration:"1",
+  minTime:"1", maxTime:"1",priority:"1", color:'#F19D4E',process:0.80}, 
+  {id:3, title: "마케팅 스터디 과제", startDate: "2021-05-27" ,endDate:"2021-05-30", duration:"3",
+  minTime:"1", maxTime:"3",priority:"5", color:'#439459',process:0.5}, 
+  { id:4,title: "큐시즘 학술제 준비", startDate: "2021-05-27" ,endDate:"2021-06-01", duration:"3",
+  minTime:"1", maxTime: "3",priority:"2", color:'#8A2DA3',process:0.64}, 
    ];
+
   }
 
 const getBackgroundColor = (userItem) => {
@@ -46,7 +48,7 @@ const getBackgroundColor = (userItem) => {
 };
 
 const getHeight = (userIndex) => {
-  const height = 180;
+  const height = 97;
   return height;
 };
 
@@ -63,7 +65,7 @@ const getItemStyleTweaks = (userItem,unselectList,active) => {
 const handleSelected = (id,unselectList)=>{
   return{
     backgroundColor: getSelectedColor(id,unselectList),
-    height:150,
+    height:30,
   } 
 };
 const getBorderWidth=(item,unselectList,active)=>{
@@ -95,14 +97,15 @@ const MainToDoListScreen = ({navigation}) => {
   // 전체 todos
   const [todos,setTodos]=useState(requestList());
   // 1. todo 추가
-  const addTodo = (newTitle, newStart, newEnd, newDuration, newMin, newMax, newPriority,newColor) => {
+  const addTodo = (newTitle, newStart, newEnd, newDuration, newMin, newMax, newPriority,newColor,newProcess) => {
     const newItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd ,
-      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor,process:0} 
+      duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor,process:newProcess} 
    
       if(edit){
-      setId(editId)
+      setEditId(id)
+      console.log(id);
       const originItem = {id:id,title:newTitle,startDate:newStart,endDate:newEnd,
-        duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor,process:0} 
+        duration: newDuration, minTime: newMin, maxTime:newMax, priority:newPriority,color:newColor,process:newProcess} 
       setTodos(todos.map(todo=>todo.id==editId?originItem:todo));
       setEditId(null);
       setId(todos.length);
@@ -209,7 +212,7 @@ const MainToDoListScreen = ({navigation}) => {
     SettingEdit(item)
  }
 }
-  
+
 
   // 5. edit
   const [editId,setEditId]=useState(null);
@@ -222,6 +225,7 @@ const MainToDoListScreen = ({navigation}) => {
     setEdit(true);
     setEditList(todos.filter(todo=>todo.id==item.id));
     setEditId(item.id);
+    setId(item.id);
     SettingModal();
   }
   const [count,setCount]=useState(0);
@@ -254,20 +258,18 @@ const MainToDoListScreen = ({navigation}) => {
           <DraxList
             data={todos}
             renderItemContent={({ item }) => (
-              <TouchableOpacity onPress={()=>SettingChecked(item)} style={[styles.alphaItem, getItemStyleTweaks(item,unselectList,active)]}>
+              <TouchableOpacity onload={()=>settingDday} onPress={()=>SettingChecked(item)} style={[styles.alphaItem, getItemStyleTweaks(item,unselectList,active)]}>
                 <View style={styles.color}>
-                  <Icon2 name="circle" size={20} color={item.color} style={styles.color}/>
+                  
                   <Text style={styles.title}>{item.title}{"\n"}</Text>
+                  <Text style={{fontSize:19, color:'#646464', position:'absolute', left:'87%',textAlign:'right',width:'15%'}}>D-{Math.floor((new Date(item.endDate).getTime()-new Date().getTime())/(1000 * 60 * 60 * 24))}</Text>
                 </View>
-                <Text style={styles.alphaText}>
-                  id: {item.id}
-                  term: {item.startDate}   ~   {item.endDate}{"\n"}
-                  duration: {item.duration}(h)                       priority: {item.priority}{"\n"}
-                  minTime: {item.minTime}(h)                         maxTime: {item.maxTime}(h){"\n"}
-                </Text>
                 
-              <ProgressBar style={{position:"relative", top:5, left:'48%', width:150, height:22}} progress={parseFloat(item.process)} color={item.color}  />
-              <Text style={{position:"relative", bottom:18, left:'50%',color:'white', fontWeight:'bold'}}>{item.process}%</Text>
+              <ProgressBar style={{position:"relative", left:'50%', width:180, height:26,borderRadius:5}} progress={parseFloat(item.process)} color={item.color}  />
+              <Text style={{position:"relative", bottom:22, left:'52%',color:'white', }}>{item.process*100}%</Text>
+              
+              {item.id%3==0?<Icon3 name="paperclip" size={22} color={'black'} style={{position:'absolute',bottom:'12%',left:'2%'}}/>
+              :item.id==2? <Icon4 name="link" size={22} color={'#555555'} style={{position:'absolute',bottom:'12%',left:'2%'}}/>:<></>}
               </TouchableOpacity>
               
             )}
@@ -334,15 +336,13 @@ const styles = StyleSheet.create({
     borderRadius:6,
   },
    title: {
-      fontSize: 17,
-      fontWeight: "bold"
+      fontSize: 18,
+      color:'black'
    },
   alphaItem: {
     backgroundColor: '#aaaaff',
     borderRadius: 8,
-    margin: 4,
-    padding: 4,
-    justifyContent: 'center',
+    marginVertical: '2%',
     alignItems: 'flex-start',
     padding: 10
   },
