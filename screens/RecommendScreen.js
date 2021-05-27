@@ -161,25 +161,7 @@ const eventsExample3 = [
   },
 ]
 
-
-// const RecommendScreen = ({ navigation })=> {
-//   return (
-//     <Tab.Navigator>
-//         <Tab.Screen name="first" component={ScreenGenerator} options={{headerShown: false}} initialParams={{ num: 1 }}/>
-//         <Tab.Screen name="second" component={ScreenGenerator}  initialParams={{ num: 2 }}/>
-//         <Tab.Screen name="third" component={ScreenGenerator}  initialParams={{ num: 3 }}/>
-//         <Tab.Screen name="fourth" component={ScreenGenerator}  initialParams={{ num: 4 }}/>
-//     </Tab.Navigator>
-//   );
-// }
-
-
-
 function RecommendScreen({ navigation, route }){
-    //const num = route.params.num;
-
-    //var algoScrNum = algoNum;
- 
       
     
       //const [events1, setEvents1] = useState([])
@@ -187,30 +169,9 @@ function RecommendScreen({ navigation, route }){
       const [date, setDate] = useState();
       const [algoNum, setAlgoNum] = useState(0);
       useEffect(() => {
-        //원래는 axios.get으로 알고리즘 완성된 배열 가져오기.
+        
         setActualEvents(eventsExample1);
-        //setEvents1(eventsExample1);
-
-        // let current_date = new Date()
-        // let after_1week_date = new Date(Date.parse(current_date) + 7 * 1000 * 60 * 60 * 24)
-        // let after_2week_date = new Date(Date.parse(current_date) + 14 * 1000 * 60 * 60 * 24)
-        // let after_3week_date = new Date(Date.parse(current_date) + 21 * 1000 * 60 * 60 * 24)
-        // if(num==1){
-        //   setDate(current_date) //new Date(2021,4,9)
-        //   console.log(1)
-        //   console.log(date)
-        // }
-        // if(num==2){
-        //   setDate(after_1week_date) //new Date(2021,4,16)
-        //   console.log(2)
-        //   console.log(date)
-        // }
-        // if(num==3){
-        //   setDate(after_2week_date)
-        //   console.log(date)
-        // }if(num==4){
-        //   setDate(after_3week_date)
-        // }
+        
       }, [])
     
       
@@ -320,14 +281,14 @@ function RecommendScreen({ navigation, route }){
       return (
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', margin:10}}>
-            <Icon name="close" size={34} color="grey" onPress={() => navigation.navigate('MainToDo')} />
-            <Icon name="check" size={34} color="grey" onPress={confirmEvent} />
+            <Icon name="close" size={34} color="#777777" onPress={() => navigation.navigate('MainToDo')} />
+            <Icon name="check" size={34} color="#777777" onPress={confirmEvent} />
           </View>  
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Icon name="leftcircle" size={34} color="blue" style={{margin:10}} onPress={changeRecommendLeft} /> 
-            <Icon name="rightcircle" size={34} color="blue" style={{margin:10}} onPress={changeRecommendRight} /> 
+            <Icon name="leftcircle" size={34} color="#4A5CFF" style={{margin:10}} onPress={changeRecommendLeft} /> 
+            <Icon name="rightcircle" size={34} color="#4A5CFF" style={{margin:10}} onPress={changeRecommendRight} /> 
           </View>
-          <Text>Recommend {algoNum} Screen!</Text>
+          {/* <Text>Recommend {algoNum} Screen!</Text> */}
           <Calendar events={actualEvents} height={700} 
           locale="ko" date={date}
           onPressEvent={(day)=>clickEvent(day)}  

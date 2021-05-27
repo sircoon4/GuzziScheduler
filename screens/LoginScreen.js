@@ -50,24 +50,24 @@ function LoginScreen({ navigation }) {
       <TouchableOpacity style={styles.btn}>
         <Text style={{color:'white', fontSize: 20, fontWeight:'700'}}>로그인</Text>
       </TouchableOpacity>
-      <Text style={{margin:20, color:'blue', fontSize:18}}>or</Text>
+      <Text style={{margin:20, color:'#4A5CFF', fontSize:18}}>or</Text>
       <TouchableOpacity 
         style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
-        margin:12, borderWidth:2, borderRadius:10, borderColor:'blue'}}
+        margin:12, borderWidth:2, borderRadius:10, borderColor:'#4A5CFF'}}
         onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}
       >
         <Icon style={styles.innerIcon} name="google" size={34} color="orange"/> 
         <Text style={{fontWeight:'700', marginLeft:24}}>Google 계정으로 로그인</Text>
       </TouchableOpacity>
       <TouchableOpacity style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
-      margin:12, borderWidth:2, borderRadius:10, borderColor:'blue'}}>
-        <Icon name="facebook-square" size={34} color="blue"/> 
+      margin:12, borderWidth:2, borderRadius:10, borderColor:'#4A5CFF'}}>
+        <Icon name="facebook-square" size={34} color="#1877F2"/> 
         <Text style={{fontWeight:'700', marginLeft:15}}>Facebook 계정으로 로그인</Text>
       </TouchableOpacity>
     
       <Text style={{marginTop:80}}>
         <Text style={styles.underline} onPress={() => navigation.navigate('SignUp')} >회원가입</Text> 
-        <Text style={{color:'blue'}}> or </Text> 
+        <Text style={{color:'#4A5CFF'}}> or </Text> 
         <Text style={styles.underline}>아이디/비밀번호 찾기</Text>
       </Text>
   </SafeAreaView>
@@ -78,9 +78,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize:40,
     fontWeight:"700",
-    color:'blue',
-    textShadowColor: 'rgba(0, 0, 0, 0.55)',
-    textShadowOffset: {width: -1, height: 1},
+    color:'#4A5CFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.25)', 
+    textShadowOffset: {width: -3, height: 3},
     textShadowRadius: 10,
     margin:40
   },
@@ -89,14 +89,14 @@ const styles = StyleSheet.create({
     width:350,
     margin: 12,
     borderBottomWidth: 1,
-    borderColor:'blue',
+    borderColor:'#4A5CFF',
     fontSize: 18,
   },
   btn : {
     height:60,
     width:350,
     margin:12,
-    backgroundColor: 'blue',
+    backgroundColor: '#4A5CFF',
     color: 'white',
     justifyContent:'center',
     alignItems:'center',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   underline:{
     textDecorationLine: 'underline',
-    color:'blue',
+    color:'#4A5CFF',
     fontSize:18
   }
 });

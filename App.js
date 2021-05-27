@@ -17,6 +17,7 @@ import RecommendScreen from './screens/RecommendScreen';
 import MainCalendarScreen from './screens/MainCalendarScreen';
 import MainToDoListScreen from './screens/MainToDoListScreen';
 import SettingScreen from './screens/SettingScreen';
+import CheckScreen from './screens/CheckScreen';
 
 import TestScreen from './screens/TestScreen';
 
@@ -113,6 +114,7 @@ function App() {
       >
         <Stack.Screen name="Main" component={MainTab} />
         <Stack.Screen name="Recommend" component={RecommendScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Check" component={CheckScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, View, Text, TouchableOpacity } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { SafeAreaView, StyleSheet, TextInput } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput, Alert  } from "react-native";
 import { useRef, useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -32,6 +32,32 @@ function SignUpScreen({ navigation }) {
   const onChangePassword = (text)=>{
     setPassword(text);
   }
+
+  const confirmRegister = () =>
+      Alert.alert(
+        "",
+        id+"님 회원가입을 축하드립니다!",
+        [
+          {
+            text: "YES",
+            onPress: () => {
+              //remove event
+              console.log("YES");
+              navigation.navigate('Login')
+              setId("")
+              setPassword("")
+            },
+            style: "default",
+          }
+        ],
+        {
+          cancelable: true,
+          onDismiss: () =>
+            Alert.alert(
+              "This alert was dismissed by tapping outside of the alert dialog."
+            ),
+        }
+      );
   return (
     <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={styles.title}>Plan Maker</Text>
@@ -46,19 +72,20 @@ function SignUpScreen({ navigation }) {
         onChangeText={text=>{onChangePassword(text)}}
         value={password}
         placeholder="8~20자리의 비밀번호"
+        secureTextEntry={true}
       />
-      <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity style={styles.btn} onPress={confirmRegister}>
         <Text style={{color:'white', fontSize: 20, fontWeight:'700'}}>계정등록</Text>
       </TouchableOpacity>
-      <Text style={{margin:20, color:'blue', fontSize:18}}>or</Text>
+      <Text style={{margin:20, color:'#4A5CFF', fontSize:18}}>or</Text>
       <TouchableOpacity style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
-      margin:12, borderWidth:2, borderRadius:10, borderColor:'blue'}}>
+      margin:12, borderWidth:2, borderRadius:10, borderColor:'#4A5CFF'}}>
         <Icon style={styles.innerIcon} name="google" size={34} color="orange"/> 
         <Text style={{fontWeight:'700', marginLeft:24}}>Google 계정으로 시작하기</Text>
       </TouchableOpacity>
       <TouchableOpacity style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
-      margin:12, borderWidth:2, borderRadius:10, borderColor:'blue'}}>
-        <Icon name="facebook-square" size={34} color="blue"/> 
+      margin:12, borderWidth:2, borderRadius:10, borderColor:'#4A5CFF'}}>
+        <Icon name="facebook-square" size={34} color="#1877F2"/> 
         <Text style={{fontWeight:'700', marginLeft:15}}>Facebook 계정으로 시작하기</Text>
       </TouchableOpacity>
       <Text style={{marginTop:80}}>
@@ -74,9 +101,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize:40,
     fontWeight:"700",
-    color:'blue',
-    textShadowColor: 'rgba(0, 0, 0, 0.55)',
-    textShadowOffset: {width: -1, height: 1},
+    color:'#4A5CFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.25)', 
+    textShadowOffset: {width: -3, height: 3},
     textShadowRadius: 10,
     margin:40
   },
@@ -85,14 +112,14 @@ const styles = StyleSheet.create({
     width:350,
     margin: 12,
     borderBottomWidth: 1,
-    borderColor:'blue',
+    borderColor:'#4A5CFF',
     fontSize: 18,
   },
   btn : {
     height:60,
     width:350,
     margin:12,
-    backgroundColor: 'blue',
+    backgroundColor: '#4A5CFF',
     color: 'white',
     justifyContent:'center',
     alignItems:'center',
