@@ -21,11 +21,12 @@ const Setting =(props)=> {
     const [title,setTitle]=sign?useState(String(item.title)):useState(null);
     const [startDate,setStart]=sign?useState(String(item.startDate)):useState(null);
     const [endDate,setEnd]=sign?useState(String(item.endDate)):useState(null);
-    const [duration,setDuration]=sign?useState(String(item.duration)):useState('1');
+    const [duration,setDuration]=sign?useState(String(item.duration)):useState(null);
     const [minTime,setMin]=sign?useState(String(item.minTime)):useState('1');
     const [maxTime,setMax]=sign?useState(String(item.maxTime)):useState('1');
     const [priority,setPrioirty]=sign?useState(String(item.priority)):useState('1');
     const [color, setColor] =sign?useState(String(item.color)):useState('#ED6B58');
+    const [process, SEtProcess]=sign?useState(item.process):useState(0);
     
     const titleInput = newTitle=>{
         setTitle(newTitle);
@@ -49,17 +50,22 @@ const Setting =(props)=> {
     const priorityInput = newPriority=>{
         setPrioirty(newPriority);
     };
+    
     const addTodoHandler = () => {
         if(sign==false)props.idHandler();
-        if(title!=null & startDate!=null&endDate!=null){
-        props.onAddTodo(title, startDate, endDate,duration, minTime, maxTime, priority,color);
+        if(title!=null & startDate!=null&endDate!=null &duration!=null& duration!=' '){
+        props.onAddTodo(title, startDate, endDate,duration, minTime, maxTime, priority,color,process);
         }
         else{
-            props.modalHandler();
+            sohwSign();
         }
       };
   
-    
+    const sohwSign = () =>
+        Alert.alert(
+            "입력 오류",
+            "모두 입력해주세요",
+  );
     const textInputStype = {
         height:35,
         width:80,
@@ -73,6 +79,11 @@ const Setting =(props)=> {
         paddingVertical:'3%'
       }
 
+      const showAlert = () =>
+        Alert.alert(
+            "입력 오류",
+            "시작일자와 마감일자를 모두 입력해주세요",
+  );
       // picker (maxTime, minTime, prioirty 설정) 관련 변수
       const [open1, setOpen1] = useState(false);
       const [open2, setOpen2] = useState(false);
@@ -96,11 +107,15 @@ const Setting =(props)=> {
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
       ];
       const month=["01","02","03","04","05","06","07","08","09","10","11","12"]
+      if(startRange==null || endRange==null){
+          showAlert();
+      }
+      else{
       const s_dates=startRange.toString().slice(4,15).split(" ");
       const s_month= month[monthNames.indexOf(s_dates[0])];
       const s_day=s_dates[1];
       const s_year=s_dates[2];
-
+      
       if(s_day.length==1)s_day="0"+`${s_day}`;
       setStart(`${s_year}`+"-"+`${s_month}`+"-"+`${s_day}`);
 
@@ -114,6 +129,7 @@ const Setting =(props)=> {
       setEnd(`${e_year}`+"-"+`${e_month}`+"-"+`${e_day}`);
 
       SettingRangeModal();
+      }
       }
 
 
@@ -178,22 +194,17 @@ const Setting =(props)=> {
         // edit 시 삭제
         const showDelteAlert = (item) =>
         Alert.alert(
-            "Delete Todo",
-            "Are you sure you want to delete",
+            "삭제",
+            "할일을 삭제하시겠습니까?",
             [
             {
                 text: "Cancel",
-                onPress: () => Alert.alert(
-                "",
-                "Cancel."),
+               
                 style: "cancel",
             },
             {
                 text: "Delete",
                 onPress: () => {
-                Alert.alert(
-                    "",
-                    "Deleted successfully.");    
                 props.onRemove(item.id)
                 },
                 style: "default",
@@ -258,6 +269,7 @@ const Setting =(props)=> {
             <Text style={styles.contentTitle}>총 소요시간 </Text>
             <TextInputMask
             type={'datetime'}
+            placeholder={'1'}
             options={{
                 format: 'HH'
             }}
@@ -269,6 +281,7 @@ const Setting =(props)=> {
         <View style={[Container,{paddingBottom:'2%'}]}>
                 <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최소 시간 </Text>
                 <DropDownPicker  style={[textInputStype]}
+                    zIndex={3}
                     zIndexInverse={1}
                     open={open1}
                     value={maxTime}
@@ -326,7 +339,7 @@ const Setting =(props)=> {
           onBackdropPress = {setRangeModal}>
           
             <View style={styles.rangemodal}>
-                <View style={{marginBottom:'25%'}}>
+                <View style={{marginBottom:'17%'}}>
                     <TouchableOpacity  style={{position:'absolute',margin:'1%'}} onPress={SettingRangeModal}>
                         <Icon2 name="close" size={30} color="grey" />
                     </TouchableOpacity>
@@ -471,7 +484,7 @@ const Setting =(props)=> {
         paddingTop:'5%'
       },
     rangemodal:{
-        height:'85%',
+        height:'70%',
         width:'105%',
         borderRadius: 10,
         backgroundColor: 'white',

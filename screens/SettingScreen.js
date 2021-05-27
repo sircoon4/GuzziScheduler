@@ -1,10 +1,11 @@
 import React,{useState} from 'react';
 import { Button, View,Switch, Text,StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/AntDesign';
+import Icon2 from 'react-native-vector-icons/Feather';
 import Tooltip from 'react-native-walkthrough-tooltip';
 import Modal from 'react-native-modal';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { format } from 'path';
 
 function SettingScreen({ navigation }) {
   const [alarm, setAlarm] = useState(true);
@@ -13,32 +14,38 @@ function SettingScreen({ navigation }) {
   const [darkMode, setDarkMode] = useState(false);
   const darkToggleSwitch = () => setDarkMode(previousState => !previousState);
 
-  const [showTip, setTip] = useState(false);
   const [rountineModal, setRoutine] = useState(false);
   function SettingRoutine(){
     setRoutine(!rountineModal);
   };
-  const [pickerMode, setPickerMode] = useState(null);
-
-  const showDatePicker = () => {
-    setPickerMode("date");
+  const [wakeupTimePicker, setWPickerMode] = useState(null);
+  const [sleepTimePicker, setSPickerMode] = useState(null);
+  const [wakeupTime, setWakeupTime] = useState(null);
+  const [sleepTime, setSleepTime] = useState(null);
+  const showWTimePicker = () => {
+    setWPickerMode("time");
   };
+  const showSTimePicker = () =>{
+    setSPickerMode("time");
+  }
 
-  const showTimePicker = () => {
-    setPickerMode("datetime");
+  const hideWPicker = () => {
+    setWPickerMode(null);
   };
+  const hideSPicker=()=>{
+    setSPickerMode(null);
+  }
 
-  const hidePicker = () => {
-    setPickerMode(null);
+  const handleWConfirm = (time) => {
+    hideWPicker();
+    setWakeupTime(time)
   };
+  const handleSConfirm = (time)=>{
+    hideSPicker();
+    setSleepTime(time);
+  }
 
-  const handleConfirm = (date) => {
-    // In order to prevent the double-shown popup bug on Android, picker has to be hidden first (https://github.com/react-native-datetimepicker/datetimepicker/issues/54#issuecomment-618776550)
-    hidePicker();
-    console.warn("A date has been picked: ", date);
-  };
-
-  // 선택 버튼
+  // 선택 버튼 1: 아침형, 2: 점심형, 3: 저녁형, 4: 새벽형
   const [selectItem,setSelect]=useState(null);
   function SettingChecked(item){
     setSelect(item);
@@ -56,6 +63,16 @@ const getSelectedColor=(key)=>{
   }
   return color;
 }
+function formatAMPM(date) {
+  var hours = date.toString().slice(16,18);
+  var minutes = date.toString().slice(19,21);
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return strTime;
+}
+
 
   return (
     <View style={{ flex: 1,paddingHorizontal:20, paddingTop:10, paddingBottom:20,backgroundColor:'white' }}>
@@ -127,37 +144,53 @@ const getSelectedColor=(key)=>{
                 
                 <Text style={[styles.subTitle,{marginTop:15}]}>기상/취침 시간을 알려주세요</Text>
                 <View style={{flexDirection:'row'}}>
-                  <TouchableOpacity onPress={showTimePicker}>
+                  <TouchableOpacity onPress={showWTimePicker}>
                     <Text style={[styles.textButton]}>기상 시간 설정</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={showSTimePicker}>
                     <Text style={[styles.textButton]}>취침 시간 설정</Text>
                   </TouchableOpacity>  
                 </View>
+                <View style={{flexDirection:'row',marginBottom:20}}>
+                  <View style={{flexDirection:'row',marginHorizontal:"10%"}}>
+                    
+                    <Text style={styles.timeText}>{wakeupTime?formatAMPM(wakeupTime):'08:00:AM'}</Text>
+                  </View>
+                  <View style={{flexDirection:'row',marginHorizontal:"10%"}}>
+                    <Text style={styles.timeText}>{sleepTime?formatAMPM(sleepTime):'12:00:PM'}</Text>
+                  </View>
+                  </View>
                 <Text style={[styles.subTitle]}>주로 어떤 시간대에 활동하세요?</Text>
                 <View style={{flexDirection:'row'}}>
-                  <TouchableOpacity key={1} style={[styles.button,getItemStyleTweaks(1)]} /* onPress={SettingChecked(1)}*/>
+                  <TouchableOpacity key={1} style={[styles.button,getItemStyleTweaks(1)]} onPress={()=>SettingChecked(1)}>
                       <Text style={styles.option}>아침형</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity key={2} style={[styles.button,getItemStyleTweaks(2)]}/* onPress={SettingChecked(2)}*/>
+                  <TouchableOpacity key={2} style={[styles.button,getItemStyleTweaks(2)]} onPress={()=>SettingChecked(2)}>
                       <Text style={styles.option}>점심형</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={{flexDirection:'row',marginBottom:30}}>
-                  <TouchableOpacity key={3} style={[styles.button,getItemStyleTweaks(3)]} /* onPress={SettingChecked(3)}*/>
+                  <TouchableOpacity key={3} style={[styles.button,getItemStyleTweaks(3)]} onPress={()=>SettingChecked(3)}>
                       <Text style={styles.option}>저녁형</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity key={4} style={[styles.button,getItemStyleTweaks(4)]} /* onPress={SettingChecked(4)}*/>
+                  <TouchableOpacity key={4} style={[styles.button,getItemStyleTweaks(4)]} onPress={()=>SettingChecked(4)}>
                     <Text style={styles.option}>새벽형</Text>
                   </TouchableOpacity>
                 </View>
                 </View>
                 </View>
                 <DateTimePickerModal
-                  isVisible={pickerMode !== null}
-                  mode={pickerMode}
-                  onConfirm={handleConfirm}
-                  onCancel={hidePicker}
+                  isVisible={wakeupTimePicker !== null}
+                  mode={wakeupTimePicker}
+                  onConfirm={handleWConfirm}
+                  onCancel={hideWPicker}
+                  display={"spinner"}
+                />
+                <DateTimePickerModal
+                  isVisible={sleepTimePicker !== null}
+                  mode={sleepTimePicker}
+                  onConfirm={handleSConfirm}
+                  onCancel={hideSPicker}
                   display={"spinner"}
                 />
             </Modal>  
@@ -181,10 +214,16 @@ const styles = StyleSheet.create({
     fontSize:17,
     color:'gray',
   },
+  timeText:{
+    fontSize:15,
+    color:'#555555',
+  },
   textButton:{
     fontSize:20,
     fontWeight:'bold',
-    padding:20,
+    paddingHorizontal:20,
+    paddingTop:20,
+    paddingBottom:3,
     color:'#555555',
     marginBottom:15,
   },
@@ -224,7 +263,7 @@ const styles = StyleSheet.create({
     color:'gray'
   },
   modal: {
-    height: '55%',
+    height: '57%',
     borderRadius: 10,
     alignItems: 'center',
     backgroundColor: 'white',
