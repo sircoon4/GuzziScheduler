@@ -20,7 +20,7 @@ export function requestList(){
   minTime:"1", maxTime:"1",priority:"1", color:'#F19D4E',process:0.80}, 
   {id:3, title: "마케팅 스터디 과제", startDate: "2021-05-27" ,endDate:"2021-05-30", duration:"3",
   minTime:"1", maxTime:"3",priority:"5", color:'#439459',process:0.5}, 
-  { id:4,title: "큐시즘 롤링페이퍼", startDate: "2021-05-27" ,endDate:"2021-06-01", duration:"3",
+  { id:4,title: "큐시즘 학술제 준비", startDate: "2021-05-27" ,endDate:"2021-06-01", duration:"3",
   minTime:"1", maxTime: "3",priority:"2", color:'#8A2DA3',process:0.64}, 
    ];
 
