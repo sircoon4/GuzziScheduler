@@ -37,6 +37,7 @@
     "react-dates": "^21.8.0",
     "react-native": "0.64.1",
     "react-native-big-calendar": "^0.9.2",
+    "react-native-bouncy-checkbox": "^2.1.1",
     "react-native-calendar-picker": "^7.1.2",
     "react-native-calendars": "^1.1260.0",
     "react-native-daterange-picker": "^1.5.1",
