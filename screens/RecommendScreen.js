@@ -279,25 +279,29 @@ function RecommendScreen({ navigation, route }){
       }
 
       return (
-        <View>
+        <View style={{backgroundColor: 'white', height:'100%'}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', margin:10}}>
             <Icon name="close" size={34} color="#777777" onPress={() => navigation.navigate('Plan Maker')} />
             <Icon name="check" size={34} color="#777777" onPress={confirmEvent} />
           </View>  
+          {/* <Text>Recommend {algoNum} Screen!</Text> */}
+          <Calendar 
+            events={actualEvents} 
+            height={600} 
+            locale="ko" 
+            date={date}
+            onPressEvent={(day)=>clickEvent(day)}  
+            swipeEnabled={true}
+            showTime={false}
+            eventCellStyle={(day)=>cellColorEvent(day)}
+            style={{color:'black'}}
+            mode={'week'}
+            scrollOffsetMinutes={540}
+          />
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Icon name="leftcircle" size={34} color="#4A5CFF" style={{margin:10}} onPress={changeRecommendLeft} /> 
             <Icon name="rightcircle" size={34} color="#4A5CFF" style={{margin:10}} onPress={changeRecommendRight} /> 
           </View>
-          {/* <Text>Recommend {algoNum} Screen!</Text> */}
-          <Calendar events={actualEvents} height={700} 
-          locale="ko" date={date}
-          onPressEvent={(day)=>clickEvent(day)}  
-          swipeEnabled={true}
-          showTime={false}
-          eventCellStyle={(day)=>cellColorEvent(day)}
-          style={{color:'black'}}
-          />
-        
       </View>
       );
 }

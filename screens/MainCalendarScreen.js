@@ -26,11 +26,6 @@ export default class MainCalendarScreen extends Component {
       editSign: false,
       editItem: null
     };
-
-    this.notif = new NotifService(
-      this.onRegister.bind(this),
-      this.onNotif.bind(this),
-    );
   }
 
   ProfileHeader() {
@@ -49,8 +44,8 @@ export default class MainCalendarScreen extends Component {
         </View>
         <View style={{flex:1, justifyContent:'flex-end'}}>
           <TouchableOpacity
-            //onPress={() => auth().signOut()}
-            onPress={() => this.notif.localNotif()}
+            onPress={() => auth().signOut()}
+            //onPress={() => this.notif.localNotif()}
           >
             <Icon name = "search" size={30} style={{marginBottom: 10}}/>
           </TouchableOpacity>

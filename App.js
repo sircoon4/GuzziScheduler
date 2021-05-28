@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Button, View, Text, Image } from 'react-native';
+import { Button, View, Text, Image, LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -30,30 +30,8 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
-function ProfileHeader() {
-  const profilePath = require('./images/skyyy_round.png');
-
-  return (
-    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-      <View style={{flex: 1}}>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={profilePath}
-        />
-      </View>
-      <View style={{flex:3, justifyContent:'flex-end'}}>
-        <Text style={{fontSize: 20}}>2021년 5월</Text>
-      </View>
-      <View style={{flex:1, backgroundColor: 'green'}}>
-        <Button
-          title="Sign Out"
-          onPress={() => auth().signOut()}
-        />
-      </View>
-    </View>
-  );
-}
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 function App() {
   // Set an initializing state whilst Firebase connects

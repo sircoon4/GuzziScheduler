@@ -7,6 +7,8 @@ import Modal from 'react-native-modal';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from 'path';
 
+import NotifService from '../utils/NotifService';
+
 function SettingScreen({ navigation }) {
   const [alarm, setAlarm] = useState(true);
   const alarmToggleSwitch = () => setAlarm(previousState => !previousState);
@@ -22,9 +24,13 @@ function SettingScreen({ navigation }) {
   const [sleepTimePicker, setSPickerMode] = useState(null);
   const [wakeupTime, setWakeupTime] = useState(null);
   const [sleepTime, setSleepTime] = useState(null);
+
+  const [alarmAttach, setAlarmAttach] = useState(false);
+
   const showWTimePicker = () => {
     setWPickerMode("time");
   };
+
   const showSTimePicker = () =>{
     setSPickerMode("time");
   }
@@ -40,6 +46,7 @@ function SettingScreen({ navigation }) {
     hideWPicker();
     setWakeupTime(time)
   };
+
   const handleSConfirm = (time)=>{
     hideSPicker();
     setSleepTime(time);
@@ -50,29 +57,49 @@ function SettingScreen({ navigation }) {
   function SettingChecked(item){
     setSelect(item);
   }
+
   const getItemStyleTweaks = (key) => {
     let style;
     return {
       backgroundColor: getSelectedColor(key),
     }
-}
-const getSelectedColor=(key)=>{
-  let color='#5E5E5E'
-  if(key==selectItem){
-    color='#4E5CF6'
   }
-  return color;
-}
-function formatAMPM(date) {
-  var hours = date.toString().slice(16,18);
-  var minutes = date.toString().slice(19,21);
-  var ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  var strTime = hours + ':' + minutes + ' ' + ampm;
-  return strTime;
-}
 
+  const getSelectedColor=(key)=>{
+    let color='#5E5E5E'
+    if(key==selectItem){
+      color='#4E5CF6'
+    }
+    return color;
+  }
+
+  var notif = null;
+  React.useEffect(() => {
+    notif = new NotifService(onRegister, onNotif);
+  });
+
+  if(!alarmAttach){
+    setAlarmAttach(true);
+  }
+
+  const onRegister = (token) => {
+    this.setState({registerToken: token.token, fcmRegistered: true});
+  }
+
+  const onNotif = (notif) => {
+    //Alert.alert(notif.title, notif.message);
+    navigation.navigate('Check');
+  }
+
+  function formatAMPM(date) {
+    var hours = date.toString().slice(16,18);
+    var minutes = date.toString().slice(19,21);
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
 
   return (
     <View style={{ flex: 1,paddingHorizontal:20, paddingTop:10, paddingBottom:20,backgroundColor:'white' }}>
@@ -94,7 +121,10 @@ function formatAMPM(date) {
         <Icon name="chevron-forward" size={23} color={'#555555'} 
         style={{position:'absolute',right:5,marginVertical:10}}></Icon>
       </TouchableOpacity>
-      <TouchableOpacity style={{flexDirection:'row'}}>
+      <TouchableOpacity 
+        style={{flexDirection:'row'}}
+        onPress={() => notif.localNotif()}
+      >
         <Text style={styles.menu}>Push 알림 받기</Text>
         <Switch
         trackColor={{ false: "#E5E5E5", true: "#4E5CF6" }}
@@ -134,7 +164,7 @@ function formatAMPM(date) {
       </TouchableOpacity>
     </View>
     <View>
-      <Text style={styles.appInfo}>플랜메이커 Plan Maker ver5.2.9</Text>
+      <Text style={styles.appInfo}>플랜메이커 Plan Maker ver0.9.3</Text>
     </View>
     <Modal 
         isVisible ={rountineModal}

@@ -215,8 +215,11 @@ const Setting =(props)=> {
 
       return(
         <>
-        <KeyboardAvoidingView style={styles.modal}
-        behavior="padding" enabled={Platform.OS === "android"}>
+        <KeyboardAvoidingView
+            style={styles.modal}
+            behavior="padding"
+            enabled={Platform.OS === "android"}
+        >
         <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={()=>props.modalHandler()} style={{position:'absolute'}}>
                 <Icon2 name="close" size={30} color="grey" />
@@ -280,7 +283,16 @@ const Setting =(props)=> {
         </View>
         <View style={[Container,{paddingBottom:'2%'}]}>
                 <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최소 시간 </Text>
-                <DropDownPicker  style={[textInputStype]}
+                <DropDownPicker  
+                    style={{
+                        height:35,
+                        borderRadius:7,
+                        borderWidth: 1,
+                        borderColor:'#555555',
+                    }}
+                    containerStyle={{
+                        width:80,
+                    }}
                     zIndex={3}
                     zIndexInverse={1}
                     open={open1}
@@ -289,13 +301,22 @@ const Setting =(props)=> {
                     setOpen={setOpen1}
                     setValue={setMax}
                     setItems={setItems}
-                    />
+                />
                 
              </View>
         <View style={[Container,{paddingBottom:'2%'}]}>
            
              <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최대 시간 </Text>
-                <DropDownPicker  style={[textInputStype]}
+                <DropDownPicker
+                    style={{
+                        height:35,
+                        borderRadius:7,
+                        borderWidth: 1,
+                        borderColor:'#555555',
+                    }}
+                    containerStyle={{
+                        width:80,
+                    }}
                     zIndex={2}
                     zIndexInverse={2}
                     open={open2}
@@ -313,7 +334,18 @@ const Setting =(props)=> {
              <View style={Container}>
                 <Icon2 name="staro" size={30} color={'gray'} ></Icon2>
                 <Text style={styles.contentTitle}>중요도: </Text>
-                <DropDownPicker style={[textInputStype,{position:'relative',right:'88%'}]}
+                <DropDownPicker
+                    style={{
+                        height:35,
+                        borderRadius:7,
+                        borderWidth: 1,
+                        borderColor:'#555555',
+                    }}
+                    containerStyle={{
+                        width:80,
+                        position:'relative',
+                        right:'88%'
+                    }}
                     zIndex={1}
                     zIndexInverse={3}
                     open={open3}
@@ -458,14 +490,16 @@ const Setting =(props)=> {
       marginLeft:'2%'
     },
     modal: {
-        position:'absolute',
-        height: '85%',
-        width:'100%',
+        position: 'absolute',
+        height: 600,
+        width: 325,
         borderRadius: 10,
         backgroundColor: 'white',
-        paddingVertical:10,
-        paddingHorizontal:5
-
+        left: 0,
+        top: 40,
+        paddingLeft:10,
+        paddingRight:10,
+        paddingTop: 20,
     },
     doneText: {
       color: 'rgb(1,123,255)',

@@ -4,6 +4,8 @@ class NotificationHandler {
   onNotification(notification) {
     console.log('NotificationHandler:', notification);
 
+    console.log(typeof this._onNotification);
+
     if (typeof this._onNotification === 'function') {
       this._onNotification(notification);
     }

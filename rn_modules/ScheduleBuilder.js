@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     buttonContainer:{
         flexDirection: 'row', 
         justifyContent: 'space-between',
-        marginTop: 20
+        //marginTop: 20
     },
     text:{
         flex:1,
@@ -484,9 +484,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: 'white',
         left: 0,
-        top: 20,
+        top: 40,
         paddingLeft:10,
         paddingRight:10,
+        paddingTop: 20,
     },
     doneText: {
         color: 'rgb(1,123,255)',

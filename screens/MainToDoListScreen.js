@@ -9,6 +9,8 @@ import Icon4 from 'react-native-vector-icons/Feather';
 import { ProgressBar, Colors } from 'react-native-paper';
 import Modal from 'react-native-modal';
 
+import ActionButton from 'react-native-action-button';
+
 
 export function requestList(){
   return [
@@ -244,34 +246,34 @@ const MainToDoListScreen = ({navigation}) => {
     <View style={{flex:1}}>
       <DraxProvider>
 
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.btn}
-          onPress={() => SettingActive()}>
-            <Text  style={styles.buttonText}>선택</Text>
-        </TouchableOpacity>
-        <View style={styles.btn_container}>
-          <TouchableOpacity onPress={Plus}>
-          <Icon name="pluscircleo" size={25} color="blue"/>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.btn}
+            onPress={() => SettingActive()}>
+              <Text  style={styles.buttonText}>선택</Text>
           </TouchableOpacity>
-        </View>
+          <View style={styles.btn_container}>
+            <TouchableOpacity onPress={Plus}>
+            <Icon name="pluscircleo" size={25} color="blue"/>
+            </TouchableOpacity>
+          </View>
 
           <DraxList
             data={todos}
             renderItemContent={({ item }) => (
-              <TouchableOpacity onload={()=>settingDday} onPress={()=>SettingChecked(item)} style={[styles.alphaItem, getItemStyleTweaks(item,unselectList,active)]}>
-                <View style={styles.color}>
-                  
-                  <Text style={styles.title}>{item.title}{"\n"}</Text>
-                  <Text style={{fontSize:19, color:'#646464', position:'absolute', left:'87%',textAlign:'right',width:'15%'}}>D-{Math.floor((new Date(item.endDate).getTime()-new Date().getTime())/(1000 * 60 * 60 * 24))}</Text>
-                </View>
+            <TouchableOpacity onload={()=>settingDday} onPress={()=>SettingChecked(item)} style={[styles.alphaItem, getItemStyleTweaks(item,unselectList,active)]}>
+              <View style={styles.color}>
                 
-              <ProgressBar style={{position:"relative", left:'50%', width:180, height:26,borderRadius:5}} progress={parseFloat(item.process)} color={item.color}  />
-              <Text style={{position:"relative", bottom:22, left:'52%',color:'white', }}>{item.process*100}%</Text>
+                <Text style={styles.title}>{item.title}{"\n"}</Text>
+                <Text style={{fontSize:19, color:'#646464', position:'absolute', left:'87%',textAlign:'right',width:'15%'}}>D-{Math.floor((new Date(item.endDate).getTime()-new Date().getTime())/(1000 * 60 * 60 * 24))}</Text>
+              </View>
               
-              {item.id%3==0?<Icon3 name="paperclip" size={22} color={'black'} style={{position:'absolute',bottom:'12%',left:'2%'}}/>
-              :item.id==2? <Icon4 name="link" size={22} color={'#555555'} style={{position:'absolute',bottom:'12%',left:'2%'}}/>:<></>}
-              </TouchableOpacity>
-              
+            <ProgressBar style={{position:"relative", left:'50%', width:155, height:26,borderRadius:5}} progress={parseFloat(item.process)} color={item.color}  />
+            <Text style={{position:"relative", bottom:22, left:'52%',color:'white', }}>{item.process*100}%</Text>
+            
+            {item.id%3==0?<Icon3 name="paperclip" size={22} color={'black'} style={{position:'absolute',bottom:'12%',left:'2%'}}/>
+            :item.id==2? <Icon4 name="link" size={22} color={'#555555'} style={{position:'absolute',bottom:'12%',left:'2%'}}/>:<></>}
+            </TouchableOpacity>
+            
             )}
             onItemReorder={({ fromIndex, toIndex }) => {
               const newData = todos.slice();
@@ -280,23 +282,31 @@ const MainToDoListScreen = ({navigation}) => {
             }}
             
             keyExtractor={(item) => item}
-          />
+        />
        
         </View>
       </DraxProvider>
-      <View style={{width:'100%', justifyContent:'center',alignItems:'center',backgroundColor:'white'}}>
-        <TouchableOpacity style={styles.btn_container2}
-        onPress={() => navigation.navigate('Recommend')}>
+      <View style={{zIndex: 10, position:'absolute', bottom:0, width:'100%', justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}>
+        <TouchableOpacity 
+          style={styles.btn_container2}
+          onPress={() => navigation.navigate('Recommend')}
+        >
           <Icon2 name="magic" size={22} color="white" />
-          <Text style={{color:'white', margin:6, fontSize:15}}>Plan Maker</Text></TouchableOpacity>
-     
+          <Text style={{color:'white', margin:6, fontSize:15}}>Plan Maker</Text>
+        </TouchableOpacity>
       </View>
       <Modal 
-          isVisible ={modal}
-          onBackdropPress = {SettingModal}>
-          <Setting onAddTodo={addTodo} idHandler={SettingId} 
-      modalHandler={SettingModal} editSign={edit} editItem={editList} onRemove={onRemove}/>
-        </Modal>
+        isVisible ={modal}
+        onBackdropPress = {SettingModal}>
+        <Setting 
+          onAddTodo={addTodo} 
+          idHandler={SettingId} 
+          modalHandler={SettingModal} 
+          editSign={edit} 
+          editItem={editList} 
+          onRemove={onRemove}
+        />
+      </Modal>
     
    </View>
   );
@@ -305,8 +315,8 @@ const MainToDoListScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 12,
-    paddingTop: 40,
+    paddingHorizontal: 12,
+    paddingTop: 50,
     backgroundColor:'white',
   },
   mainTitle:{
@@ -317,23 +327,23 @@ const styles = StyleSheet.create({
   },
   btn:{  // 선택
    position:'absolute',
-   top:10,
+   top:15,
    left:15,
   },
   btn_container: {  // + 버튼
     position: "absolute",
-    top:5,
+    top:15,
     right:10,
    },
    btn_container2: {
     flexDirection:'row',
     backgroundColor:"#4E5CF6",
-    width:'30%',
+    width:'32%',
     position:'relative',
-    left:'30%',
     padding:3,
-    justifyContent:'center',
     borderRadius:6,
+    top: -10,
+    //right: 20,
   },
    title: {
       fontSize: 18,
