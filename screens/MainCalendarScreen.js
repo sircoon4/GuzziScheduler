@@ -6,11 +6,12 @@ import Modal from 'react-native-modal';
 import ScheduleBuilder from '../rn_modules/ScheduleBuilder';
 import dateFormat from 'dateformat';
 import Icon from 'react-native-vector-icons/Feather';
+import EvilIcon from 'react-native-vector-icons/EvilIcons';
 
 import auth from '@react-native-firebase/auth';
 import * as dbAct from '../utils/dbAct.js';
 
-import NotifService from '../utils/NotifService';
+import { SearchBar } from 'react-native-elements';
 
 const testIDs = require('../testIDs');
 
@@ -24,32 +25,95 @@ export default class MainCalendarScreen extends Component {
       marked: {},
       selectedTime: this.timeToString(new Date()),
       editSign: false,
-      editItem: null
+      editItem: null,
+      searchOn: false,
+      search: '',
+      searchItems: {}
     };
   }
 
   ProfileHeader() {
     const profilePath = require('../images/skyyy_round.png');
+
+    const searchSchedule = (search) => {
+      this.setState({search})
+      const newSearchItems = {};
+      newSearchItems[this.timeToString(new Date())] = [];
+      Object.keys(this.state.items).forEach(dkey => {
+        const arr = this.state.items[dkey];
+        
+        for(var i=0;i<arr.length;i++){
+          console.log(arr[i].title.indexOf(search));
+          if(arr[i].title.indexOf(search) >= 0){
+            if(newSearchItems[dkey] == undefined)
+              newSearchItems[dkey] = [];
+            newSearchItems[dkey].push(arr[i]);
+          }
+        }
+      });
+
+      console.log(newSearchItems);
+
+      setTimeout(()=>{
+        this.setState({
+          searchItems: newSearchItems
+        })
+      }, 300);
+    }
   
     return (
       <View style={{flexDirection: 'row', justifyContent: 'space-between', height: 60, backgroundColor: 'white'}}>
         <View style={{flex: 1}}>
-          <Image
-            style={{ width: 50, height: 50, marginLeft: 15, marginTop: 5 }}
-            source={profilePath}
-          />
-        </View>
-        <View style={{flex:3, justifyContent:'flex-end'}}>
-          <Text style={{fontSize: 23, marginLeft: 10, marginBottom: 5}}>2021년 5월</Text>
-        </View>
-        <View style={{flex:1, justifyContent:'flex-end'}}>
           <TouchableOpacity
             onPress={() => auth().signOut()}
-            //onPress={() => this.notif.localNotif()}
           >
-            <Icon name = "search" size={30} style={{marginBottom: 10}}/>
+            <Image
+              style={{ width: 50, height: 50, marginLeft: 15, marginTop: 5 }}
+              source={profilePath}
+            />
           </TouchableOpacity>
         </View>
+        {this.state.searchOn ? (
+          <>
+          <View style={{flex: 4, justifyContent:'flex-end'}}>
+            <SearchBar
+              containerStyle={{backgroundColor: 'white', marginRight: 20, borderRadius: 0, bottom: -5}}
+              inputContainerStyle={{backgroundColor: 'transparent'}}
+              inputStyle={{fontSize: 20, color: '#333333'}}
+              underlineColorAndroid={'#EEEEEE'}
+              searchIcon={{
+                size: 20
+              }}
+              //lightThem={true}
+              placeholder={"일정 검색"}
+              onChangeText={searchSchedule}
+              value={this.state.search}
+            />
+          </View>
+          <View style={{zIndex:10, backgroundColor: 'transparent', position: 'absolute', top: 18, right: 12}}>
+            <TouchableOpacity
+              //onPress={() => auth().signOut()}
+              onPress={() => this.setState({searchOn: false})}
+            >
+              <EvilIcon name = "refresh" size={35}/>
+            </TouchableOpacity>
+          </View>
+          </>
+        ) : (
+          <>
+          <View style={{flex:3, justifyContent:'flex-end'}}>
+            <Text style={{fontSize: 23, marginLeft: 10, marginBottom: 5}}>2021년 5월</Text>
+          </View>
+          <View style={{flex:1, justifyContent:'flex-end'}}>
+            <TouchableOpacity
+              //onPress={() => auth().signOut()}
+              onPress={() => this.setState({searchOn: true})}
+            >
+              <Icon name = "search" size={30} style={{marginBottom: 10}}/>
+            </TouchableOpacity>
+          </View>
+          </>
+        )}
       </View>
     );
   }
@@ -64,7 +128,7 @@ export default class MainCalendarScreen extends Component {
         {this.ProfileHeader()}
         <Agenda
           testID={testIDs.agenda.CONTAINER}
-          items={this.state.items}
+          items={this.state.searchOn?this.state.searchItems:this.state.items}
           loadItemsForMonth={this.loadItems.bind(this)}
           selected={this.state.selectedTime}
           renderItem={this.renderItem.bind(this)}
@@ -193,6 +257,9 @@ export default class MainCalendarScreen extends Component {
 
   async loadItems(day) {
     const schedules = await dbAct.getAllSchedule();
+    if(schedules == null)
+      return;
+
     setTimeout(() => {
       var newItems = {};
       var newDots = {};
@@ -276,7 +343,7 @@ export default class MainCalendarScreen extends Component {
   renderEmptyDate() {
     return (
       <View style={styles.emptyDate}>
-        <Text>This is empty date!</Text>
+        <Text style = {{color: '#BBBBBB'}}>This is empty date</Text>
       </View>
     );
   }
@@ -307,6 +374,8 @@ const styles = StyleSheet.create({
   emptyDate: {
     height: 15,
     flex: 1,
-    paddingTop: 30
+    paddingTop: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });

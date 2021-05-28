@@ -102,7 +102,7 @@ function SettingScreen({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1,paddingHorizontal:20, paddingTop:10, paddingBottom:20,backgroundColor:'white' }}>
+    <View style={{ flex: 1,paddingHorizontal:20, paddingTop:30, paddingBottom:20,backgroundColor:'white' }}>
       <Text style={styles.mainTitle}>설정</Text>
       <View style={{paddingHorizontal:10, paddingVertical:20}}>
       <Text style={styles.contentTitle}>기본 설정</Text>
@@ -163,8 +163,10 @@ function SettingScreen({ navigation }) {
         style={{position:'absolute',right:5,marginVertical:10}}></Icon>
       </TouchableOpacity>
     </View>
-    <View>
-      <Text style={styles.appInfo}>플랜메이커 Plan Maker ver0.9.3</Text>
+    <View 
+      //style={{position:'absolute', bottom: 10, width: '100%', alignItems: 'center'}}
+    >
+      <Text style={[styles.appInfo, {paddingLeft: 10}]}>플랜메이커 Plan Maker ver0.9.3</Text>
     </View>
     <Modal 
         isVisible ={rountineModal}
@@ -287,7 +289,7 @@ const styles = StyleSheet.create({
  
   menu:{
     fontSize:16,
-    marginVertical:10,
+    marginVertical:12,
   },
   appInfo:{
     color:'gray'

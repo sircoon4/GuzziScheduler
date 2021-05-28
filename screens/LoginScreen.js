@@ -33,7 +33,7 @@ function LoginScreen({ navigation }) {
     setPassword(text);
   }
   return (
-    <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Text style={styles.title}>Plan Maker</Text>
       <TextInput
         style={styles.input}
