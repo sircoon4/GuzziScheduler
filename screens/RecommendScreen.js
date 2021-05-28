@@ -215,7 +215,7 @@ function RecommendScreen({ navigation, route }){
             onPress: () => {
               //remove event
               console.log("YES");
-              navigation.navigate('MainCalendar')
+              navigation.navigate('Calendar')
             },
             style: "default",
           },
@@ -281,7 +281,7 @@ function RecommendScreen({ navigation, route }){
       return (
         <View>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', margin:10}}>
-            <Icon name="close" size={34} color="#777777" onPress={() => navigation.navigate('MainToDo')} />
+            <Icon name="close" size={34} color="#777777" onPress={() => navigation.navigate('Plan Maker')} />
             <Icon name="check" size={34} color="#777777" onPress={confirmEvent} />
           </View>  
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>

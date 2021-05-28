@@ -4,10 +4,13 @@ import {Alert, StyleSheet, Text, View, TouchableOpacity, Image, Button, Keyboard
 import {Agenda} from 'react-native-calendars';
 import Modal from 'react-native-modal';
 import ScheduleBuilder from '../rn_modules/ScheduleBuilder';
-
+import dateFormat from 'dateformat';
 import Icon from 'react-native-vector-icons/Feather';
 
 import auth from '@react-native-firebase/auth';
+import * as dbAct from '../utils/dbAct.js';
+
+import NotifService from '../utils/NotifService';
 
 const testIDs = require('../testIDs');
 
@@ -18,8 +21,16 @@ export default class MainCalendarScreen extends Component {
     this.state = {
       isModalVisible: false,
       items: {},
+      marked: {},
       selectedTime: this.timeToString(new Date()),
+      editSign: false,
+      editItem: null
     };
+
+    this.notif = new NotifService(
+      this.onRegister.bind(this),
+      this.onNotif.bind(this),
+    );
   }
 
   ProfileHeader() {
@@ -38,7 +49,8 @@ export default class MainCalendarScreen extends Component {
         </View>
         <View style={{flex:1, justifyContent:'flex-end'}}>
           <TouchableOpacity
-            onPress={() => auth().signOut()}
+            //onPress={() => auth().signOut()}
+            onPress={() => this.notif.localNotif()}
           >
             <Icon name = "search" size={30} style={{marginBottom: 10}}/>
           </TouchableOpacity>
@@ -71,16 +83,8 @@ export default class MainCalendarScreen extends Component {
             // agendaTodayColor: 'red',
             // agendaKnobColor: 'blue'
           }}
-          // markingType={'period'}
-          // markedDates={{
-          //    '2017-05-08': {textColor: '#43515c'},
-          //    '2017-05-09': {textColor: '#43515c'},
-          //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-          //    '2017-05-21': {startingDay: true, color: 'blue'},
-          //    '2017-05-22': {endingDay: true, color: 'gray'},
-          //    '2017-05-24': {startingDay: true, color: 'gray'},
-          //    '2017-05-25': {color: 'gray'},
-          //    '2017-05-26': {endingDay: true, color: 'gray'}}}
+          markingType={'multi-dot'}
+          markedDates={this.state.marked}
           // monthFormat={'yyyy'}
           // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
           // renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
@@ -88,63 +92,152 @@ export default class MainCalendarScreen extends Component {
         />
         <View style={{height:60, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <Text> 광고 </Text>
-          <TouchableOpacity onPress={()=>this.toggleModal()}>
+          <TouchableOpacity onPress={()=>this.openCreateModal()}>
               <Image style={{width: 60, height: 60}} source={require('../images/blue_plus_button.png')} />
           </TouchableOpacity>
         </View>
         <Modal
           isVisible = {this.state.isModalVisible}
-          onBackdropPress = {() => this.toggleModal()}
+          //onBackdropPress = {() => this.toggleModal()}
           avoidKeyboard = {true}
         >
           <ScheduleBuilder
             modalHandler = {() => this.toggleModal()}
             saveSchedule = {(data) => this.saveSchedule(data)}
-            editSign = {false}
-            editItem = {null}
+            deleteSchedule = {(key) => this.deleteSchedule(key)}
+            editSign = {this.state.editSign}
+            editItem = {this.state.editItem}
           />
         </Modal>
       </KeyboardAvoidingView>
     );
   }
 
-  saveSchedule = (data) => {
-    console.log(data);
-    this.toggleModal();
+  openCreateModal = () => {
+    this.setState({
+      isModalVisible: !this.state.isModalVisible,
+      editSign: false,
+      editItem: null,
+    });
+  }
+
+  openUpdateModal = async (key) => {
+    var editItemWithKey = await dbAct.getSchedule(key.split('s')[1]);
+    editItemWithKey.key = key;
+    this.setState({
+      isModalVisible: !this.state.isModalVisible,
+      editSign: true,
+      editItem: editItemWithKey
+    });
   }
 
   toggleModal = () => {
     this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
-  loadItems(day) {
-    console.log(day);
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = this.timeToString(time);
-        //console.log(strTime);
-        if (!this.state.items[strTime]) {
-          this.state.items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            this.state.items[strTime].push({
-              name: 'Item for ' + strTime + ' #' + j,
-              height: 50
-            });
-          }
+  saveSchedule = async (data) => {
+    const dateData = data;
+
+    if(dateData != null && data.key == 'new'){
+      delete dateData['key'];
+
+      var skey = await dbAct.createSchedule(dateData);
+      var dateStr = dateData.start_datetime.split('T')[0];
+      var isDotExist = false;
+      if(this.state.items[dateStr] == undefined){
+        this.state.items[dateStr] = [];
+        this.state.marked[dateStr] = {};
+        this.state.marked[dateStr].dots = [];
+      }
+      else{
+        const dotArr = this.state.marked[dateStr].dots;
+        dotArr.forEach((val)=>{
+          if(val.color == dateData.color)
+            isDotExist = true;
+        })
+        if(!isDotExist){
+          this.state.marked[dateStr].dots.push({color: dateData.color});
         }
       }
+      var newItem = {};
+      newItem.key = skey;
+      var date_time = dateData.start_datetime.split('T')[1];
+      date_time = date_time.split(':')[0] + ':' + date_time.split(':')[1];
+      newItem.startTime = date_time;
+      date_time = dateData.end_datetime.split('T')[1];
+      date_time = date_time.split(':')[0] + ':' + date_time.split(':')[1];
+      newItem.endTime = date_time;
+      newItem.title = dateData.title;
+      newItem.color = dateData.color;
+      if(!isDotExist){
+        this.state.marked[dateStr].dots.push({color: dateData.color});
+      }
+      this.state.items[dateStr].push(newItem);
+    }
 
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {
-        newItems[key] = this.state.items[key];
+    setTimeout(()=>{
+      this.toggleModal();
+    }, 300);
+  }
+
+  deleteSchedule = (key) => {
+    dbAct.deleteSchedule(key.split('s')[1]);
+    Object.keys(this.state.items).forEach(dkey => {
+      const arr = this.state.items[dkey];
+      for(var i=0;i<arr.length;i++){
+        if(arr[i].key == key){
+          this.state.items[dkey].splice(i, 1);
+        }
+      }
+    });
+
+    setTimeout(()=>{
+      this.toggleModal();
+    }, 300);
+  }
+
+  async loadItems(day) {
+    const schedules = await dbAct.getAllSchedule();
+    setTimeout(() => {
+      var newItems = {};
+      var newDots = {};
+      Object.keys(schedules).forEach(key => {
+        const item = schedules[key];
+        var dateStr = item.start_datetime.split('T')[0];
+        var isDotExist = false;
+        if(newItems[dateStr] == undefined){
+          newItems[dateStr] = [];
+          newDots[dateStr] = {};
+          newDots[dateStr].dots = [];
+        }
+        else{
+          const dotArr = newDots[dateStr].dots;
+          dotArr.forEach((val)=>{
+            if(val.color == item.color)
+              isDotExist = true;
+          })
+        }
+        var newItem = {};
+        newItem.key = key;
+        var date_time = item.start_datetime.split('T')[1];
+        date_time = date_time.split(':')[0] + ':' + date_time.split(':')[1];
+        newItem.startTime = date_time;
+        date_time = item.end_datetime.split('T')[1];
+        date_time = date_time.split(':')[0] + ':' + date_time.split(':')[1];
+        newItem.endTime = date_time;
+        newItem.title = item.title;
+        newItem.color = item.color;
+        if(!isDotExist){
+          newDots[dateStr].dots.push({color: item.color});
+        }
+        newItems[dateStr].push(newItem);
       });
       
       this.setState({
-        items: newItems
+        items: newItems,
+        marked: newDots,
       });
-    }, 1000);
+    }, 300);
   }
 
   renderItem(item) {
@@ -152,7 +245,7 @@ export default class MainCalendarScreen extends Component {
       <TouchableOpacity
         testID={testIDs.agenda.ITEM}
         style={[styles.item, {height: 70}]}
-        onPress={() => Alert.alert(item.name)}
+        onPress={() => this.openUpdateModal(item.key)}
       >
         {/* <View style={{flexDirection: 'row'}}>
           <View style={{flex:5, backgroundColor: 'red', height: 65}}>
@@ -166,15 +259,19 @@ export default class MainCalendarScreen extends Component {
           </View>
         </View> */}
 
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{flex:5, backgroundColor: 'red', height: 75, marginTop: 5}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', borderLeftColor: item.color, borderLeftWidth: 4, height: 75}}>
+          {/* <View style={{flex:5, backgroundColor: 'red', height: 75, marginTop: 5}}>
 
+          </View> */}
+          <View style={{flex:80, marginLeft: 5, backgroundColor: 'transparent', alignItems: 'center'}}>
+            <Text style={{textAlign: 'center'}}>
+              {item.startTime + "\n ~ \n" + item.endTime}
+            </Text>
           </View>
-          <View style={{flex:80, marginLeft: 5, backgroundColor: 'transparent', height: 75 }}>
-
-          </View>
-          <View style={{flex:252, backgroundColor: 'transparent', height: 75 }}>
-            <Text>{item.name}</Text>
+          <View style={{flex:252, backgroundColor: 'transparent'}}>
+            <Text>
+              {"  " + item.title}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -195,7 +292,7 @@ export default class MainCalendarScreen extends Component {
 
   timeToString(time) {
     const date = new Date(time);
-    return date.toISOString().split('T')[0];
+    return dateFormat(date, 'isoDateTime').split('T')[0];
   }
 }
 
@@ -205,6 +302,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 5,
     //padding: 10,
+    paddingTop: 5,
     marginRight: 10,
     marginTop: 15,
     //borderBottomWidth:1, 

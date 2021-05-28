@@ -61,7 +61,7 @@ function CheckScreen({ navigation, route }){
                 
             </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('MainToDo')} >
+        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Plan Maker')} >
           <Text style={{color:'white', margin:6, fontSize:15}}>완료</Text>
         </TouchableOpacity>
       

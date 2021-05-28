@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, StyleSheet, TextInput, Text, TouchableOpacity, Button, KeyboardAvoidingView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, Button, KeyboardAvoidingView, Switch } from "react-native";
 import { TextInputMask } from 'react-native-masked-text';
 import dateFormat from 'dateformat';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -14,7 +14,7 @@ const ScheduleBuilder = (props) => {
     const [color, setColor] = useState('#ED6B58');
     const [showTip, setTip] = useState(false);
 
-    const [title, onChangeTitle] = useState("");
+    const [title, setTitle] = useState("");
 
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
@@ -23,141 +23,74 @@ const ScheduleBuilder = (props) => {
     const [show, setShow] = useState(false);
     const [dateType, setDateType] = useState('start');
 
-    const [repeat, setRepeat] = useState(0);
+    const [repeat, setRepeat] = useState('none');
     const [ddopen, setddOpen] = useState(false);
     const [dditems, setddItems] = useState([
-        { label: '안 함', value: 0 },
-        { label: '매 일', value: 1 },
-        { label: '매 주', value: 2 },
+        { label: '안 함', value: 'none' },
+        { label: '매 일', value: 'day' },
+        { label: '매 주', value: 'week' },
     ]);
 
     const sign = props.editSign;
     const item = props.editItem;
-    const [duration,setDuration]=sign?useState(String(item.duration)):useState('1');
-    const [minTime,setMin]=sign?useState(String(item.minTime)):useState('1');
-    const [maxTime,setMax]=sign?useState(String(item.maxTime)):useState('1');
-    const [priority,setPrioirty]=sign?useState(String(item.priority)):useState('1');
+
+    const [allDay, setAllDay] = useState(false);
     
     const titleInput = newTitle=>{
         setTitle(newTitle);
     };
-    const startInput = newStart=>{
-        setStart(newStart);
-    };
-    const endInput = newEnd=>{
-        setEnd(newEnd);
-    };
-    const durationInput = newduration=>{
-        setDuration(newduration);
-    };
-    const minInput = newMin=>{
-        setMin(newMin);
-    };
-    const maxInput = newMax=>{
-        console.log(newMax);
-        setMax(newMax);
-    };
-    const priorityInput = newPriority=>{
-        setPrioirty(newPriority);
-    };
-    const addTodoHandler = () => {
-        if(sign==false)props.idHandler();
-        if(title!=null & startDate!=null&endDate!=null){
-        props.onAddTodo(title, startDate, endDate,duration, minTime, maxTime, priority,color);
-        }
-        else{
-            props.modalHandler();
-        }
-    };
-  
-    
-    const textInputStype = {
-        height:35,
-        width:80,
-        borderRadius:7,
-        borderWidth: 1,
-        borderColor:'#555555',
-        }
     
     const Container = {
         flexDirection:'row',
         paddingVertical:'3%'
     }
 
-    // picker (maxTime, minTime, prioirty 설정) 관련 변수
-    const [open1, setOpen1] = useState(false);
-    const [open2, setOpen2] = useState(false);
-    const [open3, setOpen3] = useState(false);
-    const [items, setItems] = useState([
-        {label: '1', value: '1'},
-        {label: '2', value: '2'},
-        {label: '3', value: '3'},
-        {label: '4', value: '4'},
-        {label: '5', value: '5'},
-        {label: '6', value: '6'}
-    ]);
-
-    //  달력에서 date 를 받아옴
-    const [startRange,setRangeStart]=useState(null);
-    const [endRange,setRangeEnd]=useState(null);
-
-    // 달력에서 받아온 date의 foramt 변경
-    const setRange=()=>{
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-    const month=["01","02","03","04","05","06","07","08","09","10","11","12"]
-    const s_dates=startRange.toString().slice(4,15).split(" ");
-    const s_month= month[monthNames.indexOf(s_dates[0])];
-    const s_day=s_dates[1];
-    const s_year=s_dates[2];
-
-    if(s_day.length==1)s_day="0"+`${s_day}`;
-    setStart(`${s_year}`+"-"+`${s_month}`+"-"+`${s_day}`);
-
-    const e_dates=endRange.toString().slice(4,15).split(" ");
-    const e_month= month[monthNames.indexOf(e_dates[0])];
-    const e_day=e_dates[1];
-    const e_year=e_dates[2];
-
-    if(e_day.length==1)e_day="0"+`${e_day}`;
-
-    setEnd(`${e_year}`+"-"+`${e_month}`+"-"+`${e_day}`);
-
-    SettingRangeModal();
-    }
-
-
-    // 달력에서 선택한 날짜 값 저장
-    const  onDateChange=(date, type)=>{
-        if (type === 'END_DATE') {
-        setRangeEnd(date);
-        } else {
-        setRangeStart(date);
-        setRangeEnd(null);
-        }
-    }
-    
-    const minDate = new Date(); // Today
-    const maxDate = new Date(2050, 6, 3);
-
     const onChange = (event, selectedDate) => {
-        if (dateType == 'start') {
+        if(dateType == 'start' && mode == 'day'){
+            const startDateClone = startDate;
             const currentDate = selectedDate || startDate;
-            if (mode == 'day') {
-                setDate(currentDate);
-                setMode('time');
-            }
-            else if (mode == 'time') {
-                setStartDate(currentDate);
-                setShow(false);
-            }
+
+            startDateClone.setFullYear(currentDate.getFullYear());
+            startDateClone.setMonth(currentDate.getMonth());
+            startDateClone.setDate(currentDate.getDate());
+
+            setStartDate(startDateClone);
         }
-        else if (dateType == 'end') {
+
+        if(dateType == 'start' && mode == 'time'){
+            const startDateClone = startDate;
+            const currentDate = selectedDate || startDate;
+
+            startDateClone.setHours(currentDate.getHours());
+            startDateClone.setMinutes(currentDate.getMinutes());
+            startDateClone.setSeconds(currentDate.getSeconds());
+
+            setStartDate(startDateClone);
+        }
+
+        if(dateType == 'end' && mode == 'day'){
+            const endDateClone = endDate;
             const currentDate = selectedDate || endDate;
-            setEndDate(currentDate);
-            setShow(false);
+
+            endDateClone.setFullYear(currentDate.getFullYear());
+            endDateClone.setMonth(currentDate.getMonth());
+            endDateClone.setDate(currentDate.getDate());
+
+            setEndDate(endDateClone);
         }
+
+        if(dateType == 'end' && mode == 'time'){
+            const endDateClone = endDate;
+            const currentDate = selectedDate || endDate;
+
+            endDateClone.setHours(currentDate.getHours());
+            endDateClone.setMinutes(currentDate.getMinutes());
+            endDateClone.setSeconds(currentDate.getSeconds());
+
+            setEndDate(endDateClone);
+        }
+
+        setShow(false);
     };
 
     const showMode = (currentType, currentMode) => {
@@ -175,13 +108,28 @@ const ScheduleBuilder = (props) => {
     const submit = () => {
         var data = {};
 
-        data.color = color;
+        data.key = sign?item.key:'new';
         data.title = title;
-        data.startDate = startDate;
-        data.endDate = endDate;
+        data.start_datetime = dateFormat(startDate, 'isoDateTime');
+        data.end_datetime = dateFormat(endDate, 'isoDateTime');
         data.repeat = repeat;
+        data.isFixed = sign?item.isFixed:true;
+        data.color = color;
 
         props.saveSchedule(data);
+    }
+
+    const k_date = (date) => {
+        return (
+            date.getMonth()+1+"월 " +
+            date.getDate()+"일 " +
+            ['일','월','화','수','목','금','토','일'][date.getDay()]+"요일"
+        )
+    }
+
+    const k_time = (date) => {
+        var hour = date.getHours();
+        return (hour>=12?"오후 ":"오전 ") + hour%12+":"+date.getMinutes();
     }
 
     const createToolTip = (
@@ -224,126 +172,130 @@ const ScheduleBuilder = (props) => {
     )
 
     return (
-        <>
+    <>
         <KeyboardAvoidingView 
             style={styles.modal}
             behavior="height" 
             enabled={Platform.OS === "android"}
         >
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={()=>props.modalHandler()} style={{position:'absolute'}}>
-                <Icon2 name="close" size={30} color="grey" />
-            </TouchableOpacity>
-            <TouchableOpacity  onPress={()=>addTodoHandler()} style={{position:'absolute',right:'0%'}}>
-                <Icon2 name="check" size={30} color="grey" />
-            </TouchableOpacity>
-            </View>
-        <View style={{paddingHorizontal:'6%'}}>
-        <View style={[Container,{paddingTop:'12%',paddingBottom:'6%'}]}>
-        <Tooltip 
-                isVisible={showTip}
-                content={createToolTip}
-                onClose={() => setTip(false)}
-                placement="bottom"
-                closeOnContentInteraction={false}>
-                <TouchableOpacity style={{position:'relative',top:'20%'}}
-                    onPress={() => setTip(true)}>
-                    <Icon name = "circle" size={30} color={color}/>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={()=>props.modalHandler()} style={{position:'absolute'}}>
+                    <Icon2 name="close" size={30} color="grey" />
                 </TouchableOpacity>
-            </Tooltip>
-            <TextInput style={styles.ddayInput}
-            placeholder="할 일 제목"
-            value={title}
-            onChangeText={titleInput}></TextInput>
-        </View>
-        <View style={{paddingHorizontal:'7%'}}>
-        <View style={Container}>
-            <Icon name="calendar-check-o" size={25} color={'gray'}></Icon>
-            <Text style={[styles.contentTitle]}>시작/마감 시간 설정</Text>
-        </View>
-        <View style={[Container],{paddingHorizontal:'7%', paddingBottom:'5%'}}>
-            <TouchableOpacity  onPress={()=>console.log("Hit!")}>
-                <View style={{flexDirection:'row'}}>
-                <Icon3 name = "ray-start-arrow" size={30} color={'#4E5CF6'}
-                style={styles.icon}/>
-                <Text>시작일자               {startRange?startDate:sign?startDate:''}</Text>
+                <TouchableOpacity  onPress={submit} style={{position:'absolute',right:'0%'}}>
+                    <Icon2 name="check" size={30} color="grey" />
+                </TouchableOpacity>
+            </View>
+            <View style={{paddingLeft:10, paddingRight:40}}>
+                <View style={[Container,{paddingTop:'12%',paddingBottom:'6%'}]}>
+                    <Tooltip 
+                        isVisible={showTip}
+                        content={createToolTip}
+                        onClose={() => setTip(false)}
+                        placement="bottom"
+                        closeOnContentInteraction={false}>
+                        <TouchableOpacity style={{position:'relative',top:'20%'}}
+                            onPress={() => setTip(true)}>
+                            <Icon name = "circle" size={30} color={color}/>
+                        </TouchableOpacity>
+                    </Tooltip>
+                    <TextInput 
+                        style={styles.ddayInput}
+                        placeholder="할 일 제목"
+                        value={title}
+                        onChangeText={titleInput}
+                    ></TextInput>
                 </View>
-            
-                <View style={{flexDirection:'row'}}>
-                <Icon3 name = "ray-end-arrow" size={30} color={'#4E5CF6'} style={styles.icon}/>
-                <Text>마감일자               {endRange?endDate:sign?endDate:''}</Text>
+                <View style={{paddingHorizontal:'7%'}}>
+                    <View style={Container}>
+                        <Text style={[styles.contentTitle]}>종일</Text>
+                        <Switch
+                            trackColor={{ false: "#E5E5E5", true: "#4E5CF6" }}
+                            thumbColor={allDay ? "white" : "#white"}
+                            onValueChange={(v) => setAllDay(v)}
+                            value={allDay}
+                            style={{position:'absolute', right:-30, marginTop:5, transform: [{ scaleX: 1.2 }, { scaleY: 1.2}] }}
+                        />
+                    </View>
+                    {!allDay && (
+                    <View style={[Container],{paddingHorizontal:'7%', paddingBottom:'5%'}}>
+                        <View style={{flexDirection:'row'}}>
+                            <Icon3 name = "ray-start-arrow" size={30} color={'#4E5CF6'} style={styles.icon}/>
+                            <TouchableOpacity  onPress={()=>showMode('start','day')}>
+                                <Text style={{marginTop: 5, width: 140}}>{k_date(startDate)}</Text>
+                            </TouchableOpacity>
+                            {/* <Text>{"             "}</Text> */}
+                            <TouchableOpacity  onPress={()=>showMode('start','time')}>
+                                <Text style={{marginTop: 5}}>{k_time(startDate)}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Icon3 name = "ray-end-arrow" size={30} color={'#4E5CF6'} style={styles.icon}/>
+                            <TouchableOpacity  onPress={()=>showMode('end','day')}>
+                                <Text style={{marginTop: 5, width: 140}}>{k_date(endDate)}</Text>
+                            </TouchableOpacity>
+                            {/* <Text>{"             "}</Text> */}
+                            <TouchableOpacity  onPress={()=>showMode('end','time')}>
+                                <Text style={{marginTop: 5}}>{k_time(endDate)}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    )}
+                    <Text style={{fontSize: 5}}>{'\n'}</Text>
+                    <View style={Container}>
+                        <Icon2 name="staro" size={30} color={'gray'} ></Icon2>
+                        <Text style={styles.contentTitle}>반복: </Text>
+                        <DropDownPicker 
+                            style={{
+                                height:35,
+                                borderRadius:7,
+                                borderWidth: 1,
+                                borderColor:'#555555',
+                            }}
+                            containerStyle={{
+                                width:80,
+                            }}
+                            open={ddopen}
+                            value={repeat}
+                            items={dditems}
+                            setOpen={setddOpen}
+                            setValue={setRepeat}
+                            setItems={setddItems}
+                        />
+                    </View>
+                    <Text style={{fontSize: 5}}>{'\n'}</Text>
+                    <View style={Container}>
+                        <Icon3 name="bell-ring-outline" size={30} color={'gray'}></Icon3>
+                        <Text style={styles.contentTitle}>알림 없음</Text>
+                    </View>
+                    <Text style={{fontSize: 5}}>{'\n'}</Text>
+                    <View style={[Container,{paddingBottom:'2%'}]}>
+                        <Icon4 name="alarm-outline" size={30} color={'gray'} ></Icon4>
+                        <Text style={styles.contentTitle}>메모 </Text>
+                    </View>
+                    <View style={Container}>
+                        {sign?
+                        <TouchableOpacity 
+                            style={styles.deleteIcon}
+                            onPress={()=>props.deleteSchedule(item.key)}
+                        >
+                            <Text>
+                                <Icon2 name="delete" size={30} color="#4E5CF6" />
+                            </Text>
+                        </TouchableOpacity> :<></>}
+                    </View>
                 </View>
-        </TouchableOpacity>
-        </View>
-        
- 
-        <View style={[Container,{paddingBottom:'2%'}]}>
-            <Icon4 name="alarm-outline" size={30} color={'gray'} ></Icon4>
-            <Text style={styles.contentTitle}>총 소요시간 </Text>
-            <TextInputMask
-            type={'datetime'}
-            options={{
-                format: 'HH'
-            }}
-            value={duration}
-            onChangeText={text => {durationInput(text)}}
-            style={[textInputStype,{position:'relative',right:'88%'}]}
-            />
-        </View>
-        <View style={[Container,{paddingBottom:'2%'}]}>
-                <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최소 시간 </Text>
-                <DropDownPicker  style={[textInputStype]}
-                    zIndexInverse={1}
-                    open={open1}
-                    value={maxTime}
-                    items={items}
-                    setOpen={setOpen1}
-                    setValue={setMax}
-                    setItems={setItems}
-                    />
-                
-             </View>
-        <View style={[Container,{paddingBottom:'2%'}]}>
-           
-             <Text style={[styles.contentTitle,{position:'relative',left:30}]}>하루 최대 시간 </Text>
-                <DropDownPicker  style={[textInputStype]}
-                    zIndex={2}
-                    zIndexInverse={2}
-                    open={open2}
-                    value={minTime}
-                    items={items}
-                    setOpen={setOpen2}
-                    setValue={setMin}
-                    setItems={setItems}
-                    />
-             </View>
-             <View style={Container}>
-                <Icon3 name="bell-ring-outline" size={30} color={'gray'}></Icon3>
-                <Text style={styles.contentTitle}>알림 없음</Text>
-             </View>
-             <View style={Container}>
-                <Icon2 name="staro" size={30} color={'gray'} ></Icon2>
-                <Text style={styles.contentTitle}>중요도: </Text>
-                <DropDownPicker style={[textInputStype,{position:'relative',right:'88%'}]}
-                    zIndex={1}
-                    zIndexInverse={3}
-                    open={open3}
-                    value={priority}
-                    items={items}
-                    setOpen={setOpen3}
-                    setValue={setPrioirty}
-                    setItems={setItems}
-                    />
-             </View>
-             <View style={Container}>
-             {sign?<TouchableOpacity style={styles.deleteIcon}>
-                <Text onPress={()=>showDelteAlert(item)}>
-                  <Icon2 name="delete" size={30} color="#4E5CF6" />
-                </Text>
-              </TouchableOpacity> :<></>}
-              </View>
-              </View>
-              </View>
+            </View>
+        {show && (
+        <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={false}
+            display="default"
+            onChange={onChange}
+        />
+        )}
         </KeyboardAvoidingView>
     </>
         // <KeyboardAvoidingView 
@@ -456,6 +408,7 @@ const styles = StyleSheet.create({
     buttonContainer:{
         flexDirection: 'row', 
         justifyContent: 'space-between',
+        marginTop: 20
     },
     text:{
         flex:1,
@@ -490,7 +443,8 @@ const styles = StyleSheet.create({
         marginLeft:30,
     },
     icon:{
-        marginRight:20, marginTop:-5,
+        marginRight:10, 
+        marginBottom:10,
     },
     titleIcon:{
         position:'relative',
@@ -526,12 +480,13 @@ const styles = StyleSheet.create({
     modal: {
         position: 'absolute',
         height: 600,
-        width: 320,
+        width: 325,
         borderRadius: 10,
         backgroundColor: 'white',
         left: 0,
         top: 20,
-        paddingHorizontal:5
+        paddingLeft:10,
+        paddingRight:10,
     },
     doneText: {
         color: 'rgb(1,123,255)',
