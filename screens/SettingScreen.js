@@ -102,7 +102,7 @@ function SettingScreen({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1,paddingHorizontal:20, paddingTop:10, paddingBottom:20,backgroundColor:'white' }}>
+    <View style={{ flex: 1,paddingHorizontal:20, paddingTop:10,backgroundColor:'white' }}>
       <Text style={styles.mainTitle}>설정</Text>
       <View style={{paddingHorizontal:10, paddingVertical:20}}>
       <Text style={styles.contentTitle}>기본 설정</Text>
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     borderBottomWidth: 1,
     fontSize:25,
-    fontWeight:"bold",
+    fontWeight:'bold',
     borderBottomColor: '#dedede'
   },
   subTitle:{
@@ -282,15 +282,17 @@ const styles = StyleSheet.create({
     position:'relative',
     fontSize:17,
     color:'gray',
-    marginBottom:5,
+    marginBottom:12,
   },
  
   menu:{
     fontSize:16,
-    marginVertical:10,
+    marginVertical:12,
   },
   appInfo:{
-    color:'gray'
+    position:'absolute',
+    top:10,
+    color:'#666666'
   },
   modal: {
     height: '57%',

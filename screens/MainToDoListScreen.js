@@ -239,6 +239,10 @@ const MainToDoListScreen = ({navigation}) => {
     SettingModal();
     setEdit(false);
   }
+  function Navigate(){
+    navigation.navigate('Recommend');
+    setActive(false);
+  }
 
   // item select
 
@@ -289,9 +293,9 @@ const MainToDoListScreen = ({navigation}) => {
       <View style={{zIndex: 10, position:'absolute', bottom:0, width:'100%', justifyContent:'center',alignItems:'center',backgroundColor:'transparent'}}>
         <TouchableOpacity 
           style={styles.btn_container2}
-          onPress={() => navigation.navigate('Recommend')}
+          onPress={Navigate}
         >
-          <Icon2 name="magic" size={22} color="white" />
+          <Icon2 name="magic" size={22} color="white" style={{position:'relative',paddingVertical:'5%',paddingHorizontal:'2%'}}/>
           <Text style={{color:'white', margin:6, fontSize:15}}>Plan Maker</Text>
         </TouchableOpacity>
       </View>
