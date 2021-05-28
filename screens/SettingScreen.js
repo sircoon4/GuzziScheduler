@@ -166,7 +166,7 @@ function SettingScreen({ navigation }) {
     <View 
       //style={{position:'absolute', bottom: 10, width: '100%', alignItems: 'center'}}
     >
-      <Text style={[styles.appInfo, {paddingLeft: 10}]}>플랜메이커 Plan Maker ver0.9.3</Text>
+      <Text style={[styles.appInfo]}>플랜메이커 Plan Maker ver0.9.3</Text>
     </View>
     <Modal 
         isVisible ={rountineModal}
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     borderBottomWidth: 1,
     fontSize:25,
-    fontWeight:"bold",
+    fontWeight:'bold',
     borderBottomColor: '#dedede'
   },
   subTitle:{
@@ -284,15 +284,19 @@ const styles = StyleSheet.create({
     position:'relative',
     fontSize:17,
     color:'gray',
-    marginBottom:5,
+    marginBottom:12,
   },
  
   menu:{
     fontSize:16,
-    marginVertical:12,
+    marginVertical:14,
   },
   appInfo:{
-    color:'gray'
+    position:'absolute',
+    top:10,
+    color:'#666666',
+    paddingTop:10, 
+    paddingLeft: 10
   },
   modal: {
     height: '57%',

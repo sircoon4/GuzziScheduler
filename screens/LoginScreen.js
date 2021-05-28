@@ -52,14 +52,14 @@ function LoginScreen({ navigation }) {
       </TouchableOpacity>
       <Text style={{margin:20, color:'#4A5CFF', fontSize:18}}>or</Text>
       <TouchableOpacity 
-        style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
+        style={{width:330, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
         margin:12, borderWidth:2, borderRadius:10, borderColor:'#4A5CFF'}}
         onPress={() => onGoogleButtonPress().then(() => console.log('Signed in with Google!'))}
       >
         <Icon style={styles.innerIcon} name="google" size={34} color="orange"/> 
         <Text style={{fontWeight:'700', marginLeft:24}}>Google 계정으로 로그인</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{width:350, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
+      <TouchableOpacity style={{width:330, height:60, flexDirection: 'row', justifyContent: 'center', alignItems:'center', 
       margin:12, borderWidth:2, borderRadius:10, borderColor:'#4A5CFF'}}>
         <Icon name="facebook-square" size={34} color="#1877F2"/> 
         <Text style={{fontWeight:'700', marginLeft:15}}>Facebook 계정으로 로그인</Text>
@@ -70,7 +70,7 @@ function LoginScreen({ navigation }) {
         <Text style={{color:'#4A5CFF'}}> or </Text> 
         <Text style={styles.underline}>아이디/비밀번호 찾기</Text>
       </Text>
-  </SafeAreaView>
+    </SafeAreaView>
   );
 }
 
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width:350,
+    width:330,
     margin: 12,
     borderBottomWidth: 1,
     borderColor:'#4A5CFF',
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   btn : {
     height:60,
-    width:350,
+    width:330,
     margin:12,
     backgroundColor: '#4A5CFF',
     color: 'white',

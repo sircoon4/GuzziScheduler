@@ -251,7 +251,7 @@ const Setting =(props)=> {
             <Icon name="calendar-check-o" size={25} color={'gray'}></Icon>
             <Text style={[styles.contentTitle]}>시작/마감 시간 설정</Text>
         </View>
-        <View style={[Container],{paddingHorizontal:'7%', paddingBottom:'5%'}}>
+        <View style={[Container],{paddingHorizontal:'7%', paddingBottom:'5%',paddingTop:'2%'}}>
             <TouchableOpacity  onPress={()=>SettingRangeModal()}>
                 <View style={{flexDirection:'row'}}>
                 <Icon3 name = "ray-start-arrow" size={30} color={'#4E5CF6'}
@@ -333,7 +333,7 @@ const Setting =(props)=> {
              </View>
              <View style={Container}>
                 <Icon2 name="staro" size={30} color={'gray'} ></Icon2>
-                <Text style={styles.contentTitle}>중요도: </Text>
+                <Text style={styles.contentTitle}>중요도 </Text>
                 <DropDownPicker
                     style={{
                         height:35,
@@ -355,6 +355,10 @@ const Setting =(props)=> {
                     setValue={setPrioirty}
                     setItems={setItems}
                     />
+             </View>
+             <View style={Container}>
+             <Icon3 name="paperclip" size={30} color={'gray'}></Icon3>
+             <Text style={styles.contentTitle}>파일첨부 </Text>
              </View>
              <View style={Container}>
              {sign?<TouchableOpacity style={styles.deleteIcon}>
@@ -485,13 +489,13 @@ const Setting =(props)=> {
       borderBottomWidth: 1,
       fontSize:25,
       fontWeight:"bold",
-      color:'#999999',
+      color:'black',
       borderBottomColor: '#a5a5a5',
       marginLeft:'2%'
     },
     modal: {
         position: 'absolute',
-        height: 600,
+        height: 540,
         width: 325,
         borderRadius: 10,
         backgroundColor: 'white',
@@ -517,7 +521,7 @@ const Setting =(props)=> {
     deleteIcon: {
         position:'absolute',
         right:'-15%',
-        paddingTop:'5%'
+        top:-15,
       },
     rangemodal:{
         height:'70%',
